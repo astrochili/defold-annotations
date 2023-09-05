@@ -117,7 +117,7 @@ end
 function terminal.list_all_files(folder_path, extension, output_path)
     print('Listing the ' .. extension .. ' files at ' .. quoted(folder_path))
     local result = execute(
-        'find ' .. quoted(folder_path) .. ' -type f -name "*.' .. extension .. '" -execdir echo {} ";" > ' .. quoted(output_path),
+        'find ' .. quoted(folder_path) .. ' -type f -name "*.' .. extension .. '" | egrep -o -e "[^/]+$" > ' .. quoted(output_path),
         'Get-ChildItem -Path ' .. quoted(folder_path) .. ' -Name -Filter "*.' .. extension .. '" | Out-File -FilePath ' .. quoted(output_path) .. ' -Encoding ASCII -append'
     )
 
