@@ -146,7 +146,8 @@ end
 
 ---Make annotatable param types
 ---@param types string[]
----@return string
+---@return string concated_string
+---@return boolean is_optional whether `nil` has been dropped or not
 local function make_param_types(types)
     for index = 1, #types do
         local type = types[index]
@@ -176,7 +177,7 @@ local function make_param_types(types)
             types[index] = config.unknown_type
         else
             type = type:gsub('function%(%)', 'function')
- 
+
             if type:sub(1, 9) == 'function(' then
                 type = 'fun' .. type:sub(9)
             end
@@ -185,10 +186,19 @@ local function make_param_types(types)
         end
     end
 
+    local is_optional = false
+    for index, type in ipairs(types) do
+        if type == 'nil' then
+            is_optional = true
+            table.remove(types, index)
+            break
+        end
+    end
+
     local result = table.concat(types, '|')
     result = #result > 0 and result or config.unknown_type
 
-    return result
+    return result, is_optional
 end
 
 ---Make an annotable param description
@@ -205,10 +215,14 @@ end
 ---@return string
 local function make_param(parameter)
     local name = make_param_name(parameter.name)
-    local types = make_param_types(parameter.types)
+    local joined_types, is_optional = make_param_types(parameter.types)
     local description = make_param_description(parameter.doc)
 
-    return '---@param ' .. name .. ' ' .. types .. ' ' .. description
+    if is_optional and name:sub(-1) ~= '?' then
+        name = name .. '?'
+    end
+
+    return '---@param ' .. name .. ' ' .. joined_types .. ' ' .. description
 end
 
 ---Make an annotable return line
