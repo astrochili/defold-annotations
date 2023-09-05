@@ -1,0 +1,71 @@
+name: Update and Release
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+    
+permissions:
+  contents: write
+
+jobs:
+  check_defold_update:
+    name: Check for Updates
+    runs-on: ubuntu-latest
+    outputs:
+      defold_version: ${{ steps.fetch_defold_version.outputs.defold_version }}
+      need_update: ${{ steps.compare_versions.outputs.need_update }}
+    steps:
+      - id: fetch_defold_version
+        name: Get Latest Defold Version
+        run: |
+          DEFOLD_VERSION=$(curl https://d.defold.com/stable/info.json -silent | grep -o "\"version\": \"[^\"]*" | grep -o "[^\"]*$")
+          echo "defold_version=$DEFOLD_VERSION" >> $GITHUB_OUTPUT
+      - id: annotations_version
+        name: Get Annotations Latest Version
+        uses: pozetroninc/github-action-get-latest-release@v0.7.0
+        with:
+          repository: ${{ github.repository }}
+      - id: compare_versions
+        name: Compare Versions
+        run: |
+          DEFOLD_VERSION=${{ steps.fetch_defold_version.outputs.defold_version }}
+          ANNOTATIONS_VERSION=${{ steps.annotations_version.outputs.release }}
+          echo "Defold version is $DEFOLD_VERSION"
+          echo "Annotations version is $ANNOTATIONS_VERSION"
+          
+          if [ -z "$ANNOTATIONS_VERSION" ] | [ -z "$DEFOLD_VERSION" ]; then
+            echo "Something went wrong because version is empty. Stopping workflow."
+            echo "need_update=false" >> $GITHUB_OUTPUT
+          elif [ "$ANNOTATIONS_VERSION" = "$DEFOLD_VERSION" ]; then
+            echo "Generation is not required. Stopping workflow."
+            echo "need_update=false" >> $GITHUB_OUTPUT
+          else
+            echo "Generation is possible. Continue workflow."
+            echo "need_update=true" >> $GITHUB_OUTPUT
+          fi   
+  generate_api_release:
+    name: Generate and Release
+    needs: [check_defold_update]
+    if: ${{ needs.check_defold_update.outputs.need_update == 'true'}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.0.0
+      - name: Setup
+        uses: leafo/gh-actions-lua@v10.0.0
+        with:
+          luaVersion: "5.1"
+      - name: Run
+        run: lua main.lua
+      - name: Zip
+        run: |
+          mv api defold_api
+          zip -r defold_api_${{ needs.check_defold_update.outputs.defold_version }}.zip defold_api
+      - name: Release
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          name: ${{ needs.check_defold_update.outputs.defold_version }}
+          tag_name: ${{ needs.check_defold_update.outputs.defold_version }}
+          body: Auto-generated [Defold](https://defold.com/) ${{ needs.check_defold_update.outputs.defold_version }} annotations for [Lua Language Server](https://github.com/LuaLS/lua-language-server).
+          files: defold_api_${{ needs.check_defold_update.outputs.defold_version }}.zip

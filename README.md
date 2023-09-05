@@ -20,6 +20,12 @@ $ lua main.lua '1.5.0'
 
 As a result, you will see the `api` folder with `.lua` files. These are the annotations.
 
+## Automatic Releases
+
+This repository has an [action workflow](https://github.com/astrochili/defold-annotations/actions/workflows/release.yml) that checks the latest version of Defold daily and automatically generates and releases the new version of annotations if required.
+
+But if something goes wrong and edits are needed, there will be an additional manual release.
+
 ## Third-party
 
 - [json.lua](https://github.com/rxi/json.lua) by rxi
