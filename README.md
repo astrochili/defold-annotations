@@ -26,6 +26,12 @@ This repository has an [action workflow](https://github.com/astrochili/defold-an
 
 But if something goes wrong and edits are needed, there will be an additional manual release.
 
+## Contribution
+
+If you find a typo in the annotations or outdated meta information, please first look for it in [Defold source code](https://github.com/defold/defold/tree/master/engine) and craete a pull request there as it's the main source of documentation.
+
+Otherwise, on parsing and generation problems, open issues here.
+
 ## Third-party
 
 - [json.lua](https://github.com/rxi/json.lua) by rxi
