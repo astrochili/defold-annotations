@@ -28,9 +28,17 @@ But if something goes wrong and edits are needed, there will be an additional ma
 
 ## Contribution
 
+### Issues
+
 If you find a typo in the annotations or outdated meta information, please first look for it in [Defold source code](https://github.com/defold/defold/tree/master/engine) and craete a pull request there as it's the main source of documentation.
 
 Otherwise, on parsing and generation problems, open issues here.
+
+### Debug
+
+There is a launch config for [tomblind/local-lua-debugger-vscode](https://github.com/tomblind/local-lua-debugger-vscode) to debug with breakpoints.
+
+It's also useful to turn the `config.clean_traces` to `true` in [`config.lua`](https://github.com/astrochili/defold-annotations/blob/639fa58f60687f0a40e702bc56196d0c0c73b5d5/src/config.lua#L15) file to avoid deleting temporary files.
 
 ## Third-party
 
