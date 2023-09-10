@@ -121,14 +121,19 @@ end
 
 ---Make an annotatable param name
 ---@param original string
+---@param element element
 ---@return string name
 ---@return boolean is_optional
-local function make_param_name(original)
+local function make_param_name(original, element)
     local name = original
     local is_optional = original:sub(-1) == ']'
 
-    for original, replacement in pairs(config.param_name_replacements) do
-        name = name == original and replacement or name
+    for _, replacement in ipairs(config.param_name_replacements) do
+        local is_context_valid = replacement.element_name == nil or replacement.element_name == element.name
+
+        if is_context_valid and name == replacement.original then
+            name = replacement.replacement
+        end
     end
 
     if name:sub(1, 1) == '[' then
@@ -147,14 +152,19 @@ end
 ---Make annotatable param types
 ---@param types string[]
 ---@param is_optional boolean
+---@param element element
 ---@return string concated_string
-local function make_param_types(types, is_optional)
+local function make_param_types(types, is_optional, element)
     for index = 1, #types do
         local type = types[index]
         local is_known = false
 
-        for original, replacement in pairs(config.param_type_replacements) do
-            type = type == original and replacement or type
+        for _, replacement in ipairs(config.param_type_replacements) do
+            local is_context_valid = replacement.element_name == nil or replacement.element_name == element.name
+
+            if is_context_valid and type == replacement.original then
+                type = replacement.replacement
+            end
         end
 
         for _, known_type in ipairs(config.known_types) do
@@ -215,10 +225,11 @@ end
 
 ---Make annotable param line
 ---@param parameter table
+---@param element element
 ---@return string
-local function make_param(parameter)
-    local name, is_optional = make_param_name(parameter.name)
-    local joined_types = make_param_types(parameter.types, is_optional)
+local function make_param(parameter, element)
+    local name, is_optional = make_param_name(parameter.name, element)
+    local joined_types = make_param_types(parameter.types, is_optional, element)
     local description = make_param_description(parameter.doc)
 
     return '---@param ' .. name .. ' ' .. joined_types .. ' ' .. description
@@ -226,10 +237,11 @@ end
 
 ---Make an annotable return line
 ---@param returnvalue table
+---@param element element
 ---@return string
-local function make_return(returnvalue)
-    local name, is_optional = make_param_name(returnvalue.name)
-    local types = make_param_types(returnvalue.types, is_optional)
+local function make_return(returnvalue, element)
+    local name, is_optional = make_param_name(returnvalue.name, element)
+    local types = make_param_types(returnvalue.types, is_optional, element)
     local description = make_param_description(returnvalue.doc)
 
     return '---@return ' .. types .. ' ' .. name .. ' ' .. description
@@ -248,17 +260,17 @@ local function make_func(element)
     result = result .. make_comment(element.description) .. '\n'
 
     for _, parameter in ipairs(element.parameters) do
-        result = result .. make_param(parameter) .. '\n'
+        result = result .. make_param(parameter, element) .. '\n'
     end
 
     for _, returnvalue in ipairs(element.returnvalues) do
-        result = result .. make_return(returnvalue) .. '\n'
+        result = result .. make_return(returnvalue, element) .. '\n'
     end
 
     local param_names = {}
 
     for _, parameter in ipairs(element.parameters) do
-        local name = make_param_name(parameter.name)
+        local name = make_param_name(parameter.name, element)
         table.insert(param_names, name)
     end
 

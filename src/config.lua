@@ -80,14 +80,27 @@ config.ignored_funcs = {
 
 --- Replacements for param names
 config.param_name_replacements = {
-    ['repeat'] = 'repeating',
-    ['v'] = '...'
+    {
+        original = 'repeat',
+        replacement = 'repeating'
+    },
+    {
+        original = 'v',
+        replacement = '...',
+        element_name = 'pprint'
+    }
 }
 
 --- Replacements for param types
 config.param_type_replacements = {
-    ['resource'] = 'resource_data',
-    ['buffer'] = 'buffer_data'
+    {
+        original = 'resource',
+        replacement = 'resource_data'
+    },
+    {
+        original = 'buffer',
+        replacement = 'buffer_data'
+    }
 }
 
 ---Default type for unknown types
