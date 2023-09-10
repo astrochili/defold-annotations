@@ -1,10 +1,18 @@
 # Defold Annotations
 
-A set of Lua scripts for parsing [Defold](https://defold.com) documentation and generating annotation files for [Lua Language Server](https://github.com/LuaLS/lua-language-server). The Lua language was chosen because it allows all Defold users to contribute to this project.
+A set of Lua scripts for parsing [Defold](https://defold.com) documentation and generating annotation files for Defold API. Annotations are compatible with [Lua Language Server](https://github.com/LuaLS/lua-language-server) and [EmmyLua](https://emmylua.github.io/).
 
-By design, it can be run on Windows, macOS and Linux. Only Lua needs to be installed.
+By design, it can be run on Windows, macOS and Linux. Only Lua needs to be installed. The Lua language was chosen because it allows all Defold users to contribute to this project.
 
-## Quick Start
+Generated annotations are available on the [Releases](https://github.com/astrochili/defold-annotations/releases) page. 
+
+## Automatic Releases
+
+This repository has an [action workflow](https://github.com/astrochili/defold-annotations/actions/workflows/release.yml) that checks the latest version of Defold daily and automatically generates and releases the new version of annotations if required.
+
+But if something goes wrong and edits are needed, there will be an additional manual release.
+
+## Manual Generation
 
 Install [Lua](https://www.lua.org/) and run the `main.lua` script.
 
@@ -19,12 +27,6 @@ $ lua main.lua '1.5.0'
 ```
 
 As a result, you will see the `api` folder with `.lua` files. These are the annotations.
-
-## Automatic Releases
-
-This repository has an [action workflow](https://github.com/astrochili/defold-annotations/actions/workflows/release.yml) that checks the latest version of Defold daily and automatically generates and releases the new version of annotations if required.
-
-But if something goes wrong and edits are needed, there will be an additional manual release.
 
 ## Contribution
 
