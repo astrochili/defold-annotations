@@ -10,7 +10,7 @@ Generated annotations are available on the [Releases](https://github.com/astroch
 
 This repository has an [action workflow](https://github.com/astrochili/defold-annotations/actions/workflows/release.yml) that checks the latest version of Defold daily and automatically generates and releases the new version of annotations if required.
 
-But if something goes wrong and edits are needed, there will be an additional manual release.
+But if something goes wrong and edits are needed, there will be an additional manual update in the release.
 
 ## Manual Generation
 
