@@ -1,5 +1,7 @@
 # Defold Annotations
 
+[![workflow](https://img.shields.io/github/actions/workflow/status/astrochili/defold-annotations/release.yml)](https://github.com/astrochili/defold-annotations/actions/workflows/release.yml) [![defold-annoptations](https://img.shields.io/github/v/release/astrochili/defold-annotations.svg?include_prereleases=&sort=semver&color=blue)](https://github.com/astrochili/defold-annotations/releases) [![mit-licence](https://img.shields.io/badge/License-MIT-blue)](https://github.com/astrochili/defold-annotations/blob/master/LICENCE)
+
 A set of Lua scripts for parsing [Defold](https://defold.com) documentation and generating annotation files for Defold API. Annotations are compatible with [Lua Language Server](https://github.com/LuaLS/lua-language-server) and [EmmyLua](https://emmylua.github.io/).
 
 By design, it can be run on Windows, macOS and Linux. Only Lua needs to be installed. The Lua language was chosen because it allows all Defold users to contribute to this project.
