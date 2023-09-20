@@ -1,12 +1,16 @@
 # Defold Annotations
 
-[![workflow](https://img.shields.io/github/actions/workflow/status/astrochili/defold-annotations/release.yml)](https://github.com/astrochili/defold-annotations/actions/workflows/release.yml) [![defold-annoptations](https://img.shields.io/github/v/release/astrochili/defold-annotations.svg?include_prereleases=&sort=semver&color=blue)](https://github.com/astrochili/defold-annotations/releases) [![mit-licence](https://img.shields.io/badge/License-MIT-blue)](https://github.com/astrochili/defold-annotations/blob/master/LICENCE)
+[![Workflow](https://img.shields.io/github/actions/workflow/status/astrochili/defold-annotations/release.yml)](https://github.com/astrochili/defold-annotations/actions/workflows/release.yml) [![Release](https://img.shields.io/github/v/release/astrochili/defold-annotations.svg?include_prereleases=&sort=semver&color=blue)](https://github.com/astrochili/defold-annotations/releases) [![License](https://img.shields.io/badge/License-MIT-blue)](https://github.com/astrochili/defold-annotations/blob/master/LICENSE)
 
 A set of Lua scripts for parsing [Defold](https://defold.com) documentation and generating annotation files compatible with [Lua Language Server](https://github.com/LuaLS/lua-language-server) and [EmmyLua](https://emmylua.github.io/).
 
 By design, it can be run on Windows, macOS and Linux. Only Lua needs to be installed. The Lua language was chosen because it allows all Defold users to contribute to this project.
 
-Generated annotations are available on the [Releases](https://github.com/astrochili/defold-annotations/releases) page. 
+Generated annotations are available on the [Releases](https://github.com/astrochili/defold-annotations/releases) page.
+
+## Use case
+
+These annotations are used by [Defold Kit](https://github.com/astrochili/vscode-defold), a Visual Studio Code extension for developing games with Defold.
 
 ## Automatic Releases
 
@@ -51,5 +55,5 @@ It's also useful to turn the `config.clean_traces` to `true` in [`config.lua`](h
 
 ## Alternatives
 
-- [defold-api-emmylua](https://github.com/d954mas/defold-api-emmylua/) (Java) by Dmitry Popov 
+- [defold-api-emmylua](https://github.com/d954mas/defold-api-emmylua/) (Java) by Dmitry Popov
 - [defold-lua-annotations](https://github.com/mikatuo/defold-lua-annotations/) (C#) by Dennis Shendrik
