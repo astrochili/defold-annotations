@@ -45,9 +45,9 @@ As a result, you will see the `api` folder with `.lua` files. These are the anno
 
 ### Issues
 
-If you find a typo in the annotations or outdated meta information, please first look for it in [Defold source code](https://github.com/defold/defold/tree/master/engine) and craete a pull request there as it's the main source of documentation.
+If you find a typo in the annotations or outdated meta information, please comment to issue [#4](https://github.com/astrochili/defold-annotations/issues/4). I try to collect annotation errors there, and then prepare a pull request to [Defold source code](https://github.com/defold/defold/tree/master/engine), as this is the main source of documentation.
 
-Otherwise, on parsing and generation problems, open issues here.
+Otherwise, on parsing and generation problems, craete a new issue.
 
 ### Debug
 
