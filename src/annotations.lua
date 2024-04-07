@@ -23,6 +23,7 @@
 ---@field returnvalues? returnvalue[]
 ---@field alias? string
 ---@field fields? table
+---@field operators? table
 
 ---@class parameter
 ---@field name string

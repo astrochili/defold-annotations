@@ -19,7 +19,7 @@ config.generator_url = 'github.com/astrochili/defold-annotations'
 
 ---Url to find out the latest version of Defold
 function config.info_url()
-    return 'https://d.defold.com/stable/' .. config.info_json
+  return 'https://d.defold.com/stable/' .. config.info_json
 end
 
 ---File name of the info about the letest version
@@ -27,7 +27,7 @@ config.info_json = 'info.json'
 
 ---Url to find out the documentation archive
 function config.doc_url(version)
-    return 'https://github.com/defold/defold/releases/download/' .. version .. '/' .. config.doc_zip
+  return 'https://github.com/defold/defold/releases/download/' .. version .. '/' .. config.doc_zip
 end
 
 ---File name of the documentation archive
@@ -48,59 +48,59 @@ config.api_folder = 'api'
 ---Ignored docs
 ---Possible to use suffix `*`
 config.ignored_docs = {
-    'dm*',
-    'debug_doc',
-    'coroutine_doc',
-    'math_doc',
-    'package_doc',
-    'string_doc',
-    'table_doc',
-    'engine_doc',
-    'base_doc',
-    'os_doc',
-    'io_doc'
+  'dm*',
+  'debug_doc',
+  'coroutine_doc',
+  'math_doc',
+  'package_doc',
+  'string_doc',
+  'table_doc',
+  'engine_doc',
+  'base_doc',
+  'os_doc',
+  'io_doc'
 }
 
 ---Ignored functions
 ---Possible to use suffix `*`
 config.ignored_funcs = {
-    'init',
-    'update',
-    'fixed_update',
-    'on_input',
-    'on_message',
-    'on_reload',
-    'final',
-    'client:*',
-    'server:*',
-    'master:*',
-    'connected:*',
-    'unconnected:*'
+  'init',
+  'update',
+  'fixed_update',
+  'on_input',
+  'on_message',
+  'on_reload',
+  'final',
+  'client:*',
+  'server:*',
+  'master:*',
+  'connected:*',
+  'unconnected:*'
 }
 
 --- Replacements for param names
 config.param_name_replacements = {
-    {
-        original = 'repeat',
-        replacement = 'repeating'
-    },
-    {
-        original = 'v',
-        replacement = '...',
-        element_name = 'pprint'
-    }
+  {
+    original = 'repeat',
+    replacement = 'repeating'
+  },
+  {
+    original = 'v',
+    replacement = '...',
+    element_name = 'pprint'
+  }
 }
 
 --- Replacements for param types
 config.param_type_replacements = {
-    {
-        original = 'resource',
-        replacement = 'resource_data'
-    },
-    {
-        original = 'buffer',
-        replacement = 'buffer_data'
-    }
+  {
+    original = 'resource',
+    replacement = 'resource_data'
+  },
+  {
+    original = 'buffer',
+    replacement = 'buffer_data'
+  }
 }
 
 ---Default type for unknown types
@@ -108,71 +108,108 @@ config.unknown_type = 'unknown'
 
 ---Known types
 config.known_types = {
-    'nil',
-    'any',
-    'boolean',
-    'number',
-    'integer',
-    'string',
-    'userdata',
-    'function',
-    'thread',
-    'table'
+  'nil',
+  'any',
+  'boolean',
+  'number',
+  'integer',
+  'string',
+  'userdata',
+  'function',
+  'thread',
+  'table'
 }
 
 ---Known classes
 config.known_classes = {
-    vector3 = {
-        x = 'number',
-        y = 'number',
-        z = 'number'
+  vector3 = {
+    fields = {
+      x = 'number',
+      y = 'number',
+      z = 'number'
     },
-    vector4 = {
-        x = 'number',
-        y = 'number',
-        z = 'number',
-        w = 'number'
-    },
-    url = {
-        socket = 'hash',
-        path = 'hash',
-        fragment = 'hash'
-    },
-    ['socket.dns'] = {
-        is_global = true
+    operators = {
+      sub = { left = 'vector3', right = 'vector3' },
+      add = { left = 'vector3', right = 'vector3' },
+      mul = { left = 'number', right = 'vector3' },
+      unm = { left = nil, right = 'vector3' }
     }
+  },
+  vector4 = {
+    fields = {
+      x = 'number',
+      y = 'number',
+      z = 'number',
+      w = 'number'
+    },
+    operators = {
+      sub = { left = 'vector4', right = 'vector4' },
+      add = { left = 'vector4', right = 'vector4' },
+      mul = { left = 'number', right = 'vector4' },
+      unm = { left = nil, right = 'vector4' }
+    }
+  },
+  url = {
+    socket = 'hash',
+    path = 'hash',
+    fragment = 'hash'
+  },
+  ['socket.dns'] = {
+    is_global = true
+  },
+  matrix4 = {
+    m00 = 'number',
+    m01 = 'number',
+    m02 = 'number',
+    m03 = 'number',
+    m10 = 'number',
+    m11 = 'number',
+    m12 = 'number',
+    m13 = 'number',
+    m20 = 'number',
+    m21 = 'number',
+    m22 = 'number',
+    m23 = 'number',
+    m30 = 'number',
+    m31 = 'number',
+    m32 = 'number',
+    m33 = 'number',
+    c0 = 'vector4',
+    c1 = 'vector4',
+    c2 = 'vector4',
+    c3 = 'vector4',
+  }
 }
 
 ---Known aliases
 config.known_aliases = {
-    bool = 'boolean',
-    float = 'number',
-    quaternion = 'vector4',
-    quat = 'quaternion',
-    vector = 'vector4|vector3',
-    hash = 'userdata',
-    constant = 'userdata',
-    object = 'userdata',
-    matrix4 = 'userdata',
-    node = 'userdata',
-    constant_buffer = 'userdata',
-    render_target = 'userdata',
-    predicate = 'userdata',
-    bufferstream = 'userdata',
-    array = 'table',
-    handle = 'number',
-    client = 'userdata',
-    master = 'userdata',
-    unconnected = 'userdata',
-    resource_data = 'userdata',
-    buffer_data = 'userdata'
+  bool = 'boolean',
+  float = 'number',
+  quaternion = 'vector4',
+  quat = 'quaternion',
+  vector = 'vector4|vector3',
+  hash = 'userdata',
+  constant = 'userdata',
+  object = 'userdata',
+  node = 'userdata',
+  constant_buffer = 'userdata',
+  render_target = 'userdata',
+  predicate = 'userdata',
+  bufferstream = 'userdata',
+  array = 'table',
+  handle = 'number|render_target',
+  client = 'userdata',
+  master = 'userdata',
+  unconnected = 'userdata',
+  resource_data = 'userdata',
+  buffer_data = 'userdata'
 }
 
 config.disabled_diagnostics = {
-    'lowercase-global',
-    'missing-return',
-    'duplicate-doc-param',
-    'duplicate-set-field'
+  'lowercase-global',
+  'missing-return',
+  'duplicate-doc-param',
+  'duplicate-set-field'
 }
 
 return config
