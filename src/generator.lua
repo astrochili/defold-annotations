@@ -120,25 +120,24 @@ local function make_const(element)
 end
 
 ---Make an annotatable param name
----@param original string
+---@param parameter table
+---@param is_return boolean
 ---@param element element
 ---@return string name
 ---@return boolean is_optional
-local function make_param_name(original, element)
-  local name = original
-  local is_optional = original:sub(-1) == ']'
+local function make_param_name(parameter, is_return, element)
+  local name = parameter.name
+  local is_optional = false
 
-  for _, replacement in ipairs(config.param_name_replacements) do
-    local is_context_valid = replacement.element_name == nil or replacement.element_name == element.name
-
-    if is_context_valid and name == replacement.original then
-      name = replacement.replacement
-    end
-  end
-
-  if name:sub(1, 1) == '[' then
+  if name:sub(1, 1) == '[' and name:sub(-1) == ']' then
+    is_optional = true
     name = name:sub(2, #name - 1)
   end
+
+  name = config.global_name_replacements[name] or name
+
+  local local_replacements = config.local_name_replacements[element.name] or {}
+  name = local_replacements[(is_return and 'return_' or 'param_') .. name] or name
 
   if name:sub(-3) == '...' then
     name = '...'
@@ -150,21 +149,24 @@ local function make_param_name(original, element)
 end
 
 ---Make annotatable param types
----@param types string[]
+---@param name string
+---@param types table
 ---@param is_optional boolean
+---@param is_return boolean
 ---@param element element
 ---@return string concated_string
-local function make_param_types(types, is_optional, element)
+local function make_param_types(name, types, is_optional, is_return, element)
   for index = 1, #types do
     local type = types[index]
     local is_known = false
 
-    for _, replacement in ipairs(config.param_type_replacements) do
-      local is_context_valid = replacement.element_name == nil or replacement.element_name == element.name
+    local replacement = config.global_type_replacements[type] or type
+    local local_replacements = config.local_type_replacements[element.name] or {}
+    replacement = local_replacements[(is_return and 'return_' or 'param_') .. type .. '_' .. name] or replacement
 
-      if is_context_valid and type == replacement.original then
-        type = replacement.replacement
-      end
+    if replacement then
+      type = replacement
+      is_known = true
     end
 
     for _, known_type in ipairs(config.known_types) do
@@ -228,8 +230,8 @@ end
 ---@param element element
 ---@return string
 local function make_param(parameter, element)
-  local name, is_optional = make_param_name(parameter.name, element)
-  local joined_types = make_param_types(parameter.types, is_optional, element)
+  local name, is_optional = make_param_name(parameter, false, element)
+  local joined_types = make_param_types(name, parameter.types, is_optional, false, element)
   local description = make_param_description(parameter.doc)
 
   return '---@param ' .. name .. ' ' .. joined_types .. ' ' .. description
@@ -240,8 +242,8 @@ end
 ---@param element element
 ---@return string
 local function make_return(returnvalue, element)
-  local name, is_optional = make_param_name(returnvalue.name, element)
-  local types = make_param_types(returnvalue.types, is_optional, element)
+  local name, is_optional = make_param_name(returnvalue, true, element)
+  local types = make_param_types(name, returnvalue.types, is_optional, true, element)
   local description = make_param_description(returnvalue.doc)
 
   return '---@return ' .. types .. ' ' .. name .. ' ' .. description
@@ -270,7 +272,7 @@ local function make_func(element)
   local param_names = {}
 
   for _, parameter in ipairs(element.parameters) do
-    local name = make_param_name(parameter.name, element)
+    local name = make_param_name(parameter, false, element)
     table.insert(param_names, name)
   end
 
@@ -323,10 +325,10 @@ local function make_class(element)
     for index, operator_name in ipairs(operator_names) do
       local operator = operators[operator_name]
 
-      if operator.left then
-        result = result .. '---@operator ' .. operator_name .. '(' .. operator.left .. '): ' .. operator.right
+      if operator.param then
+        result = result .. '---@operator ' .. operator_name .. '(' .. operator.param .. '): ' .. operator.result
       else
-        result = result .. '---@operator ' .. operator_name .. ': ' .. operator.right
+        result = result .. '---@operator ' .. operator_name .. ': ' .. operator.result
       end
 
       if index < #operator_names then

@@ -78,28 +78,175 @@ config.ignored_funcs = {
   'unconnected:*'
 }
 
---- Replacements for param names
-config.param_name_replacements = {
-  {
-    original = 'repeat',
-    replacement = 'repeating'
-  },
-  {
-    original = 'v',
-    replacement = '...',
-    element_name = 'pprint'
+--- Global replacements for param names
+config.global_name_replacements = {
+  ['repeat'] = 'repeating'
+}
+
+--- Local replacements for param names
+config.local_name_replacements = {
+  pprint = {
+    param_v = '...'
   }
 }
 
---- Replacements for param types
-config.param_type_replacements = {
-  {
-    original = 'resource',
-    replacement = 'resource_data'
+--- Global replacements for param types
+config.global_type_replacements = {
+  quat = 'quaternion',
+  vector = 'vector4|vector3',
+  resource = 'resource_data',
+  buffer = 'buffer_data',
+  bufferstream = 'buffer_stream',
+  handle = 'resource_handle',
+  texture = 'resource_handle',
+  predicate = 'render_predicate',
+  client = 'socket_client',
+  master = 'socket_master',
+  unconnected = 'socket_unconnected'
+}
+
+--- Local replacements for param types
+config.local_type_replacements = {
+  ['buffer.create'] = {
+    param_table_declaration = '{ name:hash|string, type:constant, count:number }[]'
   },
-  {
-    original = 'buffer',
-    replacement = 'buffer_data'
+  ['buffer.set_metadata'] = {
+    param_table_values = 'number[]'
+  },
+  ['buffer.get_metadata'] = {
+    return_table_values = 'number[]'
+  },
+  ['collectionfactory.create'] = {
+    return_table_ids = 'table<string|hash, string|hash>'
+  },
+  ['collectionproxy.get_resources'] = {
+    return_table_resources = 'string[]'
+  },
+  ['collectionproxy.missing_resources'] = {
+    return_table_resources = 'string[]'
+  },
+  ['crash.get_modules'] = {
+    return_table_modules = '{ name:string, address:string }[]'
+  },
+  ['gui.clone_tree'] = {
+    return_table_clones = 'table<string|hash, node>'
+  },
+  ['gui.get_tree'] = {
+    return_table_clones = 'table<string|hash, node>'
+  },
+  ['gui.play_flipbook'] = {
+    param_table_play_properties = '{ offset:number|nil, playback_rate:number|nil }'
+  },
+  ['gui.stop_particlefx'] = {
+    param_table_options = '{ clear:boolean|nil }'
+  },
+  ['json.decode'] = {
+    param_table_options = '{ decode_null_as_userdata:boolean|nil }'
+  },
+  ['json.encode'] = {
+    param_table_options = '{ encode_empty_table_as_object:string }'
+  },
+  ['particlefx.stop'] = {
+    param_table_options = '{ clear:boolean|nil }'
+  },
+  ['sprite.play_flipbook'] = {
+    param_table_options = '{ offset:number|nil, playback_rate:number|nil }'
+  },
+  ['sound.play'] = {
+    param_table_play_properties = '{ delay:number|nil, gain:number|nil, pan:number|nil, speed:number|nil }'
+  },
+  ['sound.stop'] = {
+    param_table_stop_properties = '{ play_id:number }'
+  },
+  ['model.play_anim'] = {
+    param_table_play_properties = '{ blend_duration:number|nil, offset:number|nil, playback_rate:number|nil}'
+  },
+  ['image.load'] = {
+    return_table_image = '{ width:number, height:number, type:constant, buffer:string }'
+  },
+  ['image.load_buffer'] = {
+    return_table_image = '{ width:number, height:number, type:constant, buffer:buffer_data }'
+  },
+  ['physics.get_joint_properties'] = {
+    return_table_properties = '{ collide_connected:boolean|nil }'
+  },
+  ['physics.raycast'] = {
+    param_table_options = '{ all:boolean|nil }',
+    return_table_result = '{ fraction:number, position:vector3, normal:vector3, id:hash, group:hash, request_id:number }[]'
+  },
+  ['physics.get_shape'] = {
+    return_table_table = '{ type:number|nil, diameter:number|nil, dimensions:vector3|nil, height:number|nil }'
+  },
+  ['physics.set_shape'] = {
+    param_table_table = '{ diameter:number|nil, dimensions:vector3|nil, height:number|nil }'
+  },
+  ['resource.create_atlas'] = {
+    param_table_table = 'resource.atlas'
+  },
+  ['resource.get_atlas'] = {
+    return_table_data = 'resource.atlas'
+  },
+  ['resource.set_atlas'] = {
+    param_table_table = 'resource.atlas'
+  },
+  ['resource.get_render_target_info'] = {
+    return_table_table = '{ handle:resource_handle, attachments:{ handle:resource_handle, width:number, height:number, depth:number, mipmaps:number, type:number, buffer_type:number }[] }'
+  },
+  ['resource.create_texture'] = {
+    param_table_table = '{ type:number, width:number, height:number, format:number, max_mipmaps:number|nil, compression_type:number|nil}'
+  },
+  ['resource.set_texture'] = {
+    param_table_table = '{ type:number, width:number, height:number, format:number, x:number|nil, y:number|nil, mipmap:number|nil, compression_type:number|nil}'
+  },
+  ['resource.get_texture_info'] = {
+    return_table_table = '{ handle:resource_handle, width:number, height:number, depth:number, mipmaps:number, type:number }'
+  },
+  ['resource.get_text_metrics'] = {
+    param_table_options = '{ width:number|nil, leading:number|nil, tracking:number|nil, line_break:boolean|nil}',
+    return_table_metrics = '{ width:number, height:number, max_ascent:number, max_descent:number }'
+  },
+  ['resource.create_buffer'] = {
+    param_table_table = '{ buffer:buffer_data, transfer_ownership:boolean|nil }'
+  },
+  ['resource.set_buffer'] = {
+    param_table_table = '{ transfer_ownership: boolean|nil }'
+  },
+  ['render.draw'] = {
+    param_table_options = '{ frustum:matrix4|nil, frustum_planes:number|nil, constants:constant_buffer|nil }'
+  },
+  ['render.draw_debug3d'] = {
+    param_table_options = '{ frustum:matrix4|nil, frustum_planes:number|nil }'
+  },
+  ['render.predicate'] = {
+    param_table_tags = '(string|hash)[]'
+  },
+  ['render.render_target'] = {
+    param_table_parameters = 'table<number, { format:number, width:number, height:number, min_filter:number|nil, mag_filter:number|nil, u_wrap:number|nil, v_wrap:number|nil, flags:number|nil}>'
+  },
+  ['render.set_render_target'] = {
+    param_table_options = '{ transient:number[]|nil }'
+  },
+  ['sound.get_groups'] = {
+    return_table_groups = 'hash[]'
+  },
+  ['sys.get_sys_info'] = {
+    param_table_options = '{ ignore_secure:boolean|nil }',
+    return_table_sys_info = '{ device_model:string|nil, manufacturer:string|nil, system_name:string, system_version:string, api_version:string, language:string, device_language:string, territory:string, gmt_offset:number, device_ident:string|nil, user_agent:string|nil }'
+  },
+  ['sys.get_application_info'] = {
+    return_table_app_info = '{ installed:boolean }'
+  },
+  ['sys.get_engine_info'] = {
+    return_table_engine_info = '{ version:string, version_sha1:string, is_debug:boolean }'
+  },
+  ['sys.get_ifaddrs'] = {
+    return_table_ifaddrs = '{ name:string, address:string|nil, mac:string|nil, up:boolean, running:boolean }'
+  },
+  ['sys.open_url'] = {
+    param_table_attributes = '{ target:string|nil, name:string|nil }'
+  },
+  ['timer.get_info'] = {
+    return_table_data = '{ time_remaining:number, delay:number, repeating:boolean }'
   }
 }
 
@@ -129,10 +276,10 @@ config.known_classes = {
       z = 'number'
     },
     operators = {
-      sub = { left = 'vector3', right = 'vector3' },
-      add = { left = 'vector3', right = 'vector3' },
-      mul = { left = 'number', right = 'vector3' },
-      unm = { left = nil, right = 'vector3' }
+      sub = { param = 'vector3', result = 'vector3' },
+      add = { param = 'vector3', result = 'vector3' },
+      mul = { param = 'number', result = 'vector3' },
+      unm = { result = 'vector3' }
     }
   },
   vector4 = {
@@ -143,10 +290,10 @@ config.known_classes = {
       w = 'number'
     },
     operators = {
-      sub = { left = 'vector4', right = 'vector4' },
-      add = { left = 'vector4', right = 'vector4' },
-      mul = { left = 'number', right = 'vector4' },
-      unm = { left = nil, right = 'vector4' }
+      sub = { param = 'vector4', result = 'vector4' },
+      add = { param = 'vector4', result = 'vector4' },
+      mul = { param = 'number', result = 'vector4' },
+      unm = { result = 'vector4' }
     }
   },
   url = {
@@ -178,6 +325,27 @@ config.known_classes = {
     c1 = 'vector4',
     c2 = 'vector4',
     c3 = 'vector4',
+  },
+  ['resource.atlas'] = {
+    texture = 'string|hash',
+    animations = 'resource.animation[]',
+    geometries = 'resource.geometry[]',
+  },
+  ['resource.animation'] = {
+    id = 'string',
+    width = 'integer',
+    height = 'integer',
+    frame_start = 'integer',
+    frame_end = 'integer',
+    playback = 'constant',
+    fps = 'integer',
+    flip_vertical = 'boolean',
+    flip_horizontal = 'boolean'
+  },
+  ['resource.geometry'] = {
+    vertices = 'number[]',
+    uvs = 'number[]',
+    indices = 'number[]'
   }
 }
 
@@ -185,24 +353,24 @@ config.known_classes = {
 config.known_aliases = {
   bool = 'boolean',
   float = 'number',
+  array = 'table',
+
   quaternion = 'vector4',
-  quat = 'quaternion',
-  vector = 'vector4|vector3',
   hash = 'userdata',
-  constant = 'userdata',
-  object = 'userdata',
   node = 'userdata',
+  constant = 'userdata',
+
+  resource_data = 'userdata',
   constant_buffer = 'userdata',
   render_target = 'userdata',
-  predicate = 'userdata',
-  bufferstream = 'userdata',
-  array = 'table',
-  handle = 'number|render_target',
-  client = 'userdata',
-  master = 'userdata',
-  unconnected = 'userdata',
-  resource_data = 'userdata',
-  buffer_data = 'userdata'
+  render_predicate = 'userdata',
+  resource_handle = 'number|userdata',
+  buffer_stream = 'userdata',
+  buffer_data = 'userdata',
+
+  socket_client = 'userdata',
+  socket_master = 'userdata',
+  socket_unconnected = 'userdata',
 }
 
 config.disabled_diagnostics = {
