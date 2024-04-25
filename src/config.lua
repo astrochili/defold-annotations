@@ -102,7 +102,9 @@ config.global_type_replacements = {
   predicate = 'render_predicate',
   client = 'socket_client',
   master = 'socket_master',
-  unconnected = 'socket_unconnected'
+  unconnected = 'socket_unconnected',
+  ['vmath.vector3'] = 'vector3',
+  ['vmath.vector4'] = 'vector4',
 }
 
 --- Local replacements for param types
@@ -193,6 +195,9 @@ config.local_type_replacements = {
     return_table_table = '{ handle:resource_handle, attachments:{ handle:resource_handle, width:number, height:number, depth:number, mipmaps:number, type:number, buffer_type:number }[] }'
   },
   ['resource.create_texture'] = {
+    param_table_table = '{ type:number, width:number, height:number, format:number, max_mipmaps:number|nil, compression_type:number|nil}'
+  },
+  ['resource.create_texture_async'] = {
     param_table_table = '{ type:number, width:number, height:number, format:number, max_mipmaps:number|nil, compression_type:number|nil}'
   },
   ['resource.set_texture'] = {
@@ -343,6 +348,7 @@ config.known_classes = {
     flip_horizontal = 'boolean'
   },
   ['resource.geometry'] = {
+    id = 'string',
     vertices = 'number[]',
     uvs = 'number[]',
     indices = 'number[]'
@@ -367,6 +373,10 @@ config.known_aliases = {
   resource_handle = 'number|userdata',
   buffer_stream = 'userdata',
   buffer_data = 'userdata',
+
+  b2BodyType = 'number',
+  b2World = 'userdata',
+  b2Body = 'userdata',
 
   socket_client = 'userdata',
   socket_master = 'userdata',
