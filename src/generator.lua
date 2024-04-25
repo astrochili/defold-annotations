@@ -99,7 +99,7 @@ end
 local function make_namespace(name, body)
   local result = ''
 
-  result = result .. '---@class ' .. name .. '\n'
+  result = result .. '---@class defold_api.' .. name .. '\n'
   result = result .. name .. ' = {}\n\n'
   result = result .. body .. '\n\n'
   result = result .. 'return ' .. name
