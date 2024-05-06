@@ -174,7 +174,7 @@ config.local_type_replacements = {
   },
   ['physics.raycast'] = {
     param_table_options = '{ all:boolean|nil }',
-    return_table_result = '{ fraction:number, position:vector3, normal:vector3, id:hash, group:hash, request_id:number }[]'
+    return_table_result = 'physics.raycast_response[]|physics.raycast_response'
   },
   ['physics.get_shape'] = {
     return_table_table = '{ type:number|nil, diameter:number|nil, dimensions:vector3|nil, height:number|nil }'
@@ -352,6 +352,14 @@ config.known_classes = {
     vertices = 'number[]',
     uvs = 'number[]',
     indices = 'number[]'
+  },
+  ['physics.raycast_response'] = {
+    fraction = 'number',
+    position = 'vector3',
+    normal = 'vector3',
+    id = 'hash',
+    group = 'hash',
+    request_id = 'number'
   }
 }
 
