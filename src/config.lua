@@ -228,6 +228,9 @@ config.local_type_replacements = {
   ['render.render_target'] = {
     param_table_parameters = 'table<number, { format:number, width:number, height:number, min_filter:number|nil, mag_filter:number|nil, u_wrap:number|nil, v_wrap:number|nil, flags:number|nil}>'
   },
+  ['render.set_camera'] = {
+    param_table_options = '{ use_frustum:boolean|nil }'
+  },
   ['render.set_render_target'] = {
     param_table_options = '{ transient:number[]|nil }'
   },
