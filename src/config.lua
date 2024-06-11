@@ -335,34 +335,63 @@ config.known_classes = {
     c3 = 'vector4',
   },
   ['resource.atlas'] = {
-    texture = 'string|hash',
-    animations = 'resource.animation[]',
-    geometries = 'resource.geometry[]',
+    texture = 'string|hash The path to the texture resource, e.g "/main/my_texture.texturec"',
+    animations = 'resource.animation[] A list of the animations in the atlas',
+    geometries = 'resource.geometry[] A list of the geometries that should map to the texture data',
   },
   ['resource.animation'] = {
-    id = 'string',
-    width = 'integer',
-    height = 'integer',
-    frame_start = 'integer',
-    frame_end = 'integer',
-    playback = 'constant',
-    fps = 'integer',
-    flip_vertical = 'boolean',
-    flip_horizontal = 'boolean'
+    id = 'string The id of the animation, used in e.g sprite.play_animation',
+    width = 'integer The width of the animation',
+    height = 'integer The height of the animation',
+    frame_start = 'integer Index to the first geometry of the animation. Indices are lua based and must be in the range of 1 .. in atlas.',
+    frame_end = 'integer Index to the last geometry of the animation (non-inclusive). Indices are lua based and must be in the range of 1 .. in atlas.',
+    playback = 'constant|nil Optional playback mode of the animation, the default value is go.PLAYBACK_ONCE_FORWARD',
+    fps = 'integer|nil Optional fps of the animation, the default value is 30',
+    flip_vertical = 'boolean|nil Optional flip the animation vertically, the default value is false',
+    flip_horizontal = 'boolean|nil Optional flip the animation horizontally, the default value is false'
   },
   ['resource.geometry'] = {
-    id = 'string',
-    vertices = 'number[]',
-    uvs = 'number[]',
-    indices = 'number[]'
+    id = 'string The name of the geometry. Used when matching animations between multiple atlases',
+    vertices = 'number[] A list of the vertices in texture space of the geometry in the form { px0, py0, px1, py1, ..., pxn, pyn }',
+    uvs = 'number[] A list of the uv coordinates in texture space of the geometry in the form of { u0, v0, u1, v1, ..., un, vn }',
+    indices = 'number[] A list of the indices of the geometry in the form { i0, i1, i2, ..., in }. Each tripe in the list represents a triangle.'
   },
   ['physics.raycast_response'] = {
-    fraction = 'number',
-    position = 'vector3',
-    normal = 'vector3',
-    id = 'hash',
-    group = 'hash',
-    request_id = 'number'
+    fraction = 'number The fraction of the hit measured along the ray, where 0 is the start of the ray and 1 is the end',
+    position = 'vector3 The world position of the hit',
+    normal = 'vector3 The normal of the surface of the collision object where it was hit',
+    id = 'hash The instance id of the hit collision object',
+    group = 'hash The collision group of the hit collision object as a hashed name',
+    request_id = 'number The id supplied when the ray cast was requested'
+  },
+  ['on_input.action'] = {
+    value = 'number|nil The amount of input given by the user. This is usually 1 for buttons and 0-1 for analogue inputs. This is not present for mouse movement.',
+    pressed = 'boolean|nil If the input was pressed this frame. This is not present for mouse movement.',
+    released = 'boolean|nil If the input was released this frame. This is not present for mouse movement.',
+    repeated = 'boolean|nil If the input was repeated this frame. This is similar to how a key on a keyboard is repeated when you hold it down. This is not present for mouse movement.',
+    x = 'number|nil The x value of a pointer device, if present.',
+    y = 'number|nil The y value of a pointer device, if present.',
+    screen_x = 'number|nil The screen space x value of a pointer device, if present.',
+    screen_y = 'number|nil The screen space y value of a pointer device, if present.',
+    dx = 'number|nil The change in x value of a pointer device, if present.',
+    dy = 'number|nil The change in y value of a pointer device, if present.',
+    screen_dx = 'number|nil The change in screen space x value of a pointer device, if present.',
+    gamepad = 'integer|nil The change in screen space y value of a pointer device, if present.',
+    screen_dy = 'number|nil The index of the gamepad device that provided the input.',
+    touch = '[on_input.touch]|nil List of touch input, one element per finger, if present.'
+  },
+  ['on_input.touch'] = {
+    id = 'number A number identifying the touch input during its duration.',
+    pressed = 'boolean True if the finger was pressed this frame.',
+    released = 'boolean True if the finger was released this frame.',
+    tap_count = 'integer Number of taps, one for single, two for double-tap, etc',
+    x = 'number The x touch location.',
+    y = 'number The y touch location.',
+    dx = 'number The change in x value.',
+    dy = 'number The change in y value.',
+    acc_x = 'number|nil Accelerometer x value (if present).',
+    acc_y = 'number|nil Accelerometer y value (if present).',
+    acc_z = 'number|nil Accelerometer z value (if present).'
   }
 }
 
