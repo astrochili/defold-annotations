@@ -195,16 +195,16 @@ config.local_type_replacements = {
     return_table_table = '{ handle:resource_handle, attachments:{ handle:resource_handle, width:number, height:number, depth:number, mipmaps:number, type:number, buffer_type:number }[] }'
   },
   ['resource.create_texture'] = {
-    param_table_table = '{ type:number, width:number, height:number, format:number, max_mipmaps:number|nil, compression_type:number|nil}'
+    param_table_table = '{ type:number, width:number, height:number, format:number, flags:number|nil, max_mipmaps:number|nil, compression_type:number|nil}'
   },
   ['resource.create_texture_async'] = {
-    param_table_table = '{ type:number, width:number, height:number, format:number, max_mipmaps:number|nil, compression_type:number|nil}'
+    param_table_table = '{ type:number, width:number, height:number, format:number, flags:number|nil, max_mipmaps:number|nil, compression_type:number|nil}'
   },
   ['resource.set_texture'] = {
     param_table_table = '{ type:number, width:number, height:number, format:number, x:number|nil, y:number|nil, mipmap:number|nil, compression_type:number|nil}'
   },
   ['resource.get_texture_info'] = {
-    return_table_table = '{ handle:resource_handle, width:number, height:number, depth:number, mipmaps:number, type:number }'
+    return_table_table = '{ handle:resource_handle, width:number, height:number, depth:number, mipmaps:number, flags:number, type:number }'
   },
   ['resource.get_text_metrics'] = {
     param_table_options = '{ width:number|nil, leading:number|nil, tracking:number|nil, line_break:boolean|nil}',
