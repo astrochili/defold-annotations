@@ -408,7 +408,7 @@ config.known_aliases = {
 
   resource_data = 'userdata',
   constant_buffer = 'userdata',
-  render_target = 'userdata',
+  render_target = 'string|userdata',
   render_predicate = 'userdata',
   resource_handle = 'number|userdata',
   buffer_stream = 'userdata',
