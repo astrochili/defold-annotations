@@ -6,6 +6,8 @@
   MIT license. See LICENSE for details.
 --]]
 
+---@meta
+
 ---@class module
 ---@field info info
 ---@field elements element[]

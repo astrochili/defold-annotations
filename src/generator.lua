@@ -81,6 +81,8 @@ end
 local function make_disabled_diagnostics(disabled_diagnostics)
   local result = ''
 
+  result = result .. '---@meta\n'
+
   for index, disabled_diagnostic in ipairs(disabled_diagnostics) do
     result = result .. '---@diagnostic disable: ' .. disabled_diagnostic
 
