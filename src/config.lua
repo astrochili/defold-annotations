@@ -80,7 +80,8 @@ config.ignored_funcs = {
 
 --- Global replacements for param names
 config.global_name_replacements = {
-  ['repeat'] = 'repeating'
+  ['repeat'] = 'repeating',
+  ['...commands'] = '...'
 }
 
 --- Local replacements for param names
@@ -105,6 +106,10 @@ config.global_type_replacements = {
   unconnected = 'socket_unconnected',
   ['vmath.vector3'] = 'vector3',
   ['vmath.vector4'] = 'vector4',
+  vecto4 = 'vector4',
+  schema = 'editor.schema',
+  component = 'editor.component',
+  transaction_step = 'editor.transaction_step',
 }
 
 --- Local replacements for param types
@@ -129,6 +134,58 @@ config.local_type_replacements = {
   },
   ['crash.get_modules'] = {
     return_table_modules = '{ name:string, address:string }[]'
+  },
+  ['editor.transact'] = {
+    ['param_transaction_step[_txs'] = 'editor.transaction_step[]'
+  },
+  ['editor.execute'] = {
+    param_table_options = '{ reload_resources:boolean|nil, out:string|nil, err:string|nil }'
+  },
+  ['editor.external_file_attributes'] = {
+    return_table_attributes = '{ path:string, exists:boolean, is_file:boolean, is_directory:boolean }'
+  },
+  ['editor.prefs.schema.array'] = {
+    param_table_opts = '{ item:editor.schema, default:any[]|nil, scope:string|nil }'
+  },
+  ['editor.prefs.schema.boolean'] = {
+    param_table_opts = '{ default:boolean|nil, scope:string|nil }'
+  },
+  ['editor.prefs.schema.enum'] = {
+    param_table_opts = '{ values:(nil|boolean|number|string)[], default:any|nil, scope:string|nil }'
+  },
+  ['editor.prefs.schema.integer'] = {
+    param_table_opts = '{ default:integer|nil, scope:string|nil }'
+  },
+  ['editor.prefs.schema.keyword'] = {
+    param_table_opts = '{ default:string|nil, scope:string|nil }'
+  },
+  ['editor.prefs.schema.number'] = {
+    param_table_opts = '{ default:number|nil, scope:string|nil }'
+  },
+  ['editor.prefs.schema.object'] = {
+    param_table_opts = '{ properties:table<string, editor.schema>, default:table<string, editor.schema>|nil, scope:string|nil }'
+  },
+  ['editor.prefs.schema.object_of'] = {
+    param_table_opts = '{ key:editor.schema, val:editor.schema, default:table|nil, scope:string|nil }'
+  },
+  ['editor.prefs.schema.set'] = {
+    param_table_opts = '{ item:editor.schema, default:table<editor.schema, boolean>|nil, scope:string|nil }'
+  },
+  ['editor.prefs.schema.string'] = {
+    param_table_opts = '{ default:string|nil, scope:string|nil }'
+  },
+  ['editor.prefs.schema.tuple'] = {
+    param_table_opts = '{ items:editor.schema[], default:any[]|nil, scope:string|nil }'
+  },
+  ['editor.resource_attributes'] = {
+    return_table_value = '{ exists:boolean, is_file:boolean, is_directory:boolean }'
+  },
+  ['editor.ui.use_memo'] = {
+    ['param_...any_...'] = 'any',
+    ['return_...any_values'] = 'any ...'
+  },
+  ['editor.ui.use_state'] = {
+    ['param_...any_...'] = 'any'
   },
   ['gui.clone_tree'] = {
     return_table_clones = 'table<string|hash, node>'
@@ -312,6 +369,48 @@ config.known_classes = {
   ['socket.dns'] = {
     is_global = true
   },
+  ['editor.ui'] = {
+    is_global = true
+  },
+  ['editor.ui.ALIGNMENT'] = {
+    is_global = true
+  },
+  ['editor.ui.COLOR'] = {
+    is_global = true
+  },
+  ['editor.ui.HEADING_STYLE'] = {
+    is_global = true
+  },
+  ['editor.ui.ICON'] = {
+    is_global = true
+  },
+  ['editor.ui.ISSUE_SEVERITY'] = {
+    is_global = true
+  },
+  ['editor.ui.ORIENTATION'] = {
+    is_global = true
+  },
+  ['editor.ui.PADDING'] = {
+    is_global = true
+  },
+  ['editor.ui.SPACING'] = {
+    is_global = true
+  },
+  ['editor.ui.TEXT_ALIGNMENT'] = {
+    is_global = true
+  },
+  ['editor.prefs'] = {
+    is_global = true
+  },
+  ['editor.prefs.SCOPE'] = {
+    is_global = true
+  },
+  ['editor.prefs.schema'] = {
+    is_global = true
+  },
+  ['editor.tx'] = {
+    is_global = true
+  },
   matrix4 = {
     m00 = 'number',
     m01 = 'number',
@@ -421,13 +520,18 @@ config.known_aliases = {
   socket_client = 'userdata',
   socket_master = 'userdata',
   socket_unconnected = 'userdata',
+
+  ['editor.schema'] = 'userdata',
+  ['editor.component'] = 'userdata',
+  ['editor.transaction_step'] = 'userdata'
 }
 
 config.disabled_diagnostics = {
   'lowercase-global',
   'missing-return',
   'duplicate-doc-param',
-  'duplicate-set-field'
+  'duplicate-set-field',
+  'args-after-dots'
 }
 
 return config
