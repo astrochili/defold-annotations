@@ -158,12 +158,13 @@ end
 ---@param element element
 ---@return string concated_string
 local function make_param_types(name, types, is_optional, is_return, element)
+  local local_replacements = config.local_type_replacements[element.name] or {}
+
   for index = 1, #types do
     local type = types[index]
     local is_known = false
 
     local replacement = config.global_type_replacements[type] or type
-    local local_replacements = config.local_type_replacements[element.name] or {}
     replacement = local_replacements[(is_return and 'return_' or 'param_') .. type .. '_' .. name] or replacement
 
     if replacement then
@@ -259,26 +260,52 @@ local function make_func(element)
     return
   end
 
-  local result = ''
+  local comment = make_comment(element.description) .. '\n'
 
-  result = result .. make_comment(element.description) .. '\n'
+  local generic = config.generics[element.name]
+  local generic_occuriences = 0
 
+  local params = ''
   for _, parameter in ipairs(element.parameters) do
-    result = result .. make_param(parameter, element) .. '\n'
+    local param = make_param(parameter, element)
+    local count = 0
+
+    if generic then
+      param, count = param:gsub(' ' .. generic .. ' ', ' T ')
+      generic_occuriences = generic_occuriences + count
+    end
+
+    params = params .. param .. '\n'
   end
 
+  local returns = ''
   for _, returnvalue in ipairs(element.returnvalues) do
-    result = result .. make_return(returnvalue, element) .. '\n'
+    local return_ = make_return(returnvalue, element)
+    local count = 0
+
+    if generic then
+      return_, count = return_:gsub(' ' .. generic .. ' ', ' T ')
+      generic_occuriences = generic_occuriences + count
+    end
+
+    returns = returns .. return_ .. '\n'
   end
 
-  local param_names = {}
+  if generic_occuriences >= 2 then
+    generic = ('---@generic T: ' .. generic .. '\n')
+  else
+    generic = ''
+  end
+
+  local func_params = {}
 
   for _, parameter in ipairs(element.parameters) do
     local name = make_param_name(parameter, false, element)
-    table.insert(param_names, name)
+    table.insert(func_params, name)
   end
 
-  result = result .. 'function ' .. element.name .. '(' .. table.concat(param_names, ', ') .. ') end'
+  local func = 'function ' .. element.name .. '(' .. table.concat(func_params, ', ') .. ') end'
+  local result = comment .. generic .. params .. returns .. func
 
   return result
 end

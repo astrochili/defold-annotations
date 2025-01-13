@@ -9,7 +9,7 @@
 [![Telegram](https://img.shields.io/badge/telegram-gray?&logo=telegram)](https://t.me/astronachos)
 [![Buy me a coffee](https://img.shields.io/badge/buy_me_a_coffee-gray?&logo=buy%20me%20a%20coffee)](https://buymeacoffee.com/astrochili)
 
-A set of Lua scripts for parsing [Defold](https://defold.com) documentation and generating annotation files compatible with [Lua Language Server](https://github.com/LuaLS/lua-language-server) and [EmmyLua](https://emmylua.github.io/).
+A set of Lua scripts for parsing [Defold](https://defold.com) documentation and generating annotation files compatible with [Lua Language Server](https://github.com/LuaLS/lua-language-server).
 
 By design, it can be run on Windows, macOS and Linux. Only Lua needs to be installed. The Lua language was chosen because it allows all Defold users to contribute to this project.
 

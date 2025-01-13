@@ -312,7 +312,20 @@ config.local_type_replacements = {
   },
   ['timer.get_info'] = {
     return_table_data = '{ time_remaining:number, delay:number, repeating:boolean }'
+  },
+  ['vmath.euler_to_quat'] = {
+    param_number_y = 'number|nil',
+    param_number_z = 'number|nil'
   }
+}
+
+config.generics = {
+  ['vmath.clamp'] = 'number|vector3|vector4',
+  ['vmath.dot'] = 'vector3|vector4',
+  ['vmath.normalize'] = 'vector3|vector4|quaternion',
+  ['vmath.mul_per_elem'] = 'vector3|vector4',
+  ['vmath.slerp'] = 'vector3|vector4',
+  ['vmath.lerp'] = 'vector3|vector4'
 }
 
 ---Default type for unknown types
