@@ -251,6 +251,9 @@ config.local_type_replacements = {
   ['resource.get_render_target_info'] = {
     return_table_table = '{ handle:resource_handle, attachments:{ handle:resource_handle, width:number, height:number, depth:number, mipmaps:number, type:number, buffer_type:number, texture:hash }[] }'
   },
+  ['resource.create_sound_data'] = {
+    param_table_options = '{ data:string|nil, filesize:number|nil, partial:boolean|nil }'
+  },
   ['resource.create_texture'] = {
     param_table_table = '{ type:number, width:number, height:number, format:number, flags:number|nil, max_mipmaps:number|nil, compression_type:number|nil}'
   },
