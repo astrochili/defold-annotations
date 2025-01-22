@@ -1,5 +1,5 @@
 --[[
-  types.lua
+  meta.lua
   github.com/astrochili/defold-annotations
 
   Copyright (c) 2023 Roman Silin
@@ -9,18 +9,18 @@
 local config = require 'src.config'
 local utils = require 'src.utils'
 
-local types = {}
+local meta = {}
 
 --
 -- Public
 
 ---Create a helper module with aliases and classes used by other modules
 ---@return module module
-function types.make_module()
-  local types_module = {
+function meta.make_module()
+  local meta_module = {
     info = {
-      namespace = 'types',
-      brief = 'Known classes and aliases used in the Defold API'
+      namespace = 'meta',
+      brief = 'Known types and aliases used in the Defold API'
     },
     elements = {}
   }
@@ -36,7 +36,7 @@ function types.make_module()
       operators = known_class.operators
     }
 
-    table.insert(types_module.elements, element)
+    table.insert(meta_module.elements, element)
   end
 
   local alias_names = utils.sorted_keys(config.known_aliases)
@@ -47,10 +47,10 @@ function types.make_module()
       alias = config.known_aliases[alias_name]
     }
 
-    table.insert(types_module.elements, element)
+    table.insert(meta_module.elements, element)
   end
 
-  return types_module
+  return meta_module
 end
 
-return types
+return meta

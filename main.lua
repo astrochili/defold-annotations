@@ -8,7 +8,7 @@
 
 local fetcher = require 'src.fetcher'
 local parser = require 'src.parser'
-local types = require 'src.types'
+local meta = require 'src.meta'
 local generator = require 'src.generator'
 
 -- Fetch the Defold version
@@ -20,8 +20,8 @@ local json_paths = fetcher.fetch_docs(defold_version)
 -- Parse .json files to namespace modules
 local modules = parser.parse_json(json_paths)
 
--- Append the known types module
-table.insert(modules, types.make_module())
+-- Append the known types and aliases module
+table.insert(modules, meta.make_module())
 
 -- Generate the API folder with .lua files
 generator.generate_api(modules, defold_version)
