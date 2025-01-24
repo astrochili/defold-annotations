@@ -493,7 +493,8 @@ config.known_classes = {
     screen_dx = 'number|nil The change in screen space x value of a pointer device, if present.',
     gamepad = 'integer|nil The change in screen space y value of a pointer device, if present.',
     screen_dy = 'number|nil The index of the gamepad device that provided the input.',
-    touch = '[on_input.touch]|nil List of touch input, one element per finger, if present.'
+    touch = '[on_input.touch]|nil List of touch input, one element per finger, if present.',
+    text = 'string|nil The text entered with the `text` action, if present'
   },
   ['on_input.touch'] = {
     id = 'number A number identifying the touch input during its duration.',
