@@ -124,7 +124,7 @@ config.local_type_replacements = {
     return_table_values = 'number[]'
   },
   ['collectionfactory.create'] = {
-    return_table_ids = 'table<string|hash, string|hash>'
+    return_table_ids = 'table<hash, hash>'
   },
   ['collectionproxy.get_resources'] = {
     return_table_resources = 'string[]'
@@ -188,10 +188,10 @@ config.local_type_replacements = {
     ['param_...any_...'] = 'any'
   },
   ['gui.clone_tree'] = {
-    return_table_clones = 'table<string|hash, node>'
+    return_table_clones = 'table<hash, node>'
   },
   ['gui.get_tree'] = {
-    return_table_clones = 'table<string|hash, node>'
+    return_table_clones = 'table<hash, node>'
   },
   ['gui.play_flipbook'] = {
     param_table_play_properties = '{ offset:number|nil, playback_rate:number|nil }'
