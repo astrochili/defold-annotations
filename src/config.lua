@@ -135,6 +135,25 @@ config.local_type_replacements = {
   ['crash.get_modules'] = {
     return_table_modules = '{ name:string, address:string }[]'
   },
+  ['editor.bundle.check_boxes_grid_row'] = {
+    ['return_component[_row'] = 'editor.component[]'
+  },
+  ['editor.bundle.common_variant_grid_row'] = {
+    ['return_component[_row'] = 'editor.component[]'
+  },
+  ['editor.bundle.desktop_variant_grid_row'] = {
+    ['return_component[_row'] = 'editor.component[]'
+  },
+  ['editor.bundle.dialog'] = {
+    ['param_component[_rows'] = 'editor.component[]'
+  },
+  ['editor.bundle.grid_row'] = {
+    ['param_component[_content'] = 'editor.component[]',
+    ['return_component[_row'] = 'editor.component[]'
+  },
+  ['editor.bundle.texture_compression_grid_row'] = {
+    ['return_component[_row'] = 'editor.component[]'
+  },
   ['editor.transact'] = {
     ['param_transaction_step[_txs'] = 'editor.transaction_step[]'
   },
@@ -427,6 +446,9 @@ config.known_classes = {
   ['editor.tx'] = {
     is_global = true
   },
+  ['editor.bundle'] = {
+    is_global = true
+  },
   matrix4 = {
     m00 = 'number',
     m01 = 'number',
@@ -493,7 +515,7 @@ config.known_classes = {
     screen_dx = 'number|nil The change in screen space x value of a pointer device, if present.',
     gamepad = 'integer|nil The change in screen space y value of a pointer device, if present.',
     screen_dy = 'number|nil The index of the gamepad device that provided the input.',
-    touch = '[on_input.touch]|nil List of touch input, one element per finger, if present.',
+    touch = 'on_input.touch[]|nil List of touch input, one element per finger, if present.',
     text = 'string|nil The text entered with the `text` action, if present'
   },
   ['on_input.touch'] = {
