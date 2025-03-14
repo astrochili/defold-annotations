@@ -94,7 +94,6 @@ config.local_name_replacements = {
 --- Global replacements for param types
 config.global_type_replacements = {
   quat = 'quaternion',
-  vector = 'vector4|vector3',
   resource = 'resource_data',
   buffer = 'buffer_data',
   bufferstream = 'buffer_stream',
@@ -338,6 +337,9 @@ config.local_type_replacements = {
   ['vmath.euler_to_quat'] = {
     param_number_y = 'number|nil',
     param_number_z = 'number|nil'
+  },
+  ['vmath.vector'] = {
+    param_table_t = 'number[]'
   }
 }
 
@@ -543,6 +545,7 @@ config.known_aliases = {
   hash = 'userdata',
   node = 'userdata',
   constant = 'userdata',
+  vector = 'userdata',
 
   resource_data = 'userdata',
   constant_buffer = 'userdata',
