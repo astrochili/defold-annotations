@@ -217,6 +217,18 @@ config.local_type_replacements = {
   ['gui.stop_particlefx'] = {
     param_table_options = '{ clear:boolean|nil }'
   },
+  ['http.server.external_file_response'] = {
+    ['param_table&lt;string,string&gt;_headers'] = 'table<string, string>'
+  },
+  ['http.server.json_response'] = {
+    ['param_table&lt;string,string&gt;_headers'] = 'table<string, string>'
+  },
+  ['http.server.resource_response'] = {
+    ['param_table&lt;string,string&gt;_headers'] = 'table<string, string>'
+  },
+  ['http.server.response'] = {
+    ['param_table&lt;string,string&gt;_headers'] = 'table<string, string>'
+  },
   ['json.decode'] = {
     param_table_options = '{ decode_null_as_userdata:boolean|nil }'
   },
@@ -273,13 +285,13 @@ config.local_type_replacements = {
     param_table_options = '{ data:string|nil, filesize:number|nil, partial:boolean|nil }'
   },
   ['resource.create_texture'] = {
-    param_table_table = '{ type:number, width:number, height:number, format:number, flags:number|nil, max_mipmaps:number|nil, compression_type:number|nil}'
+    param_table_table = '{ type:number, width:number, height:number, depth:number, format:number, flags:number|nil, max_mipmaps:number|nil, compression_type:number|nil}'
   },
   ['resource.create_texture_async'] = {
-    param_table_table = '{ type:number, width:number, height:number, format:number, flags:number|nil, max_mipmaps:number|nil, compression_type:number|nil}'
+    param_table_table = '{ type:number, width:number, height:number, depth:number, format:number, flags:number|nil, max_mipmaps:number|nil, compression_type:number|nil}'
   },
   ['resource.set_texture'] = {
-    param_table_table = '{ type:number, width:number, height:number, format:number, x:number|nil, y:number|nil, mipmap:number|nil, compression_type:number|nil}'
+    param_table_table = '{ type:number, width:number, height:number, format:number, x:number|nil, y:number|nil, z:number|nil, mipmap:number|nil, compression_type:number|nil}'
   },
   ['resource.get_texture_info'] = {
     return_table_table = '{ handle:resource_handle, width:number, height:number, depth:number, mipmaps:number, flags:number, type:number }'
@@ -340,6 +352,9 @@ config.local_type_replacements = {
   },
   ['vmath.vector'] = {
     param_table_t = 'number[]'
+  },
+  ['zip.pack'] = {
+    param_table_opts = '{ method:string|nil, level:integer|nil }'
   }
 }
 
@@ -402,6 +417,15 @@ config.known_classes = {
     socket = 'hash',
     path = 'hash',
     fragment = 'hash'
+  },
+  ['http.server'] = {
+    is_global = true
+  },
+  ['zip'] = {
+    is_global = true
+  },
+  ['zip.METHOD'] = {
+    is_global = true
   },
   ['socket.dns'] = {
     is_global = true
