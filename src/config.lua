@@ -531,7 +531,11 @@ config.known_classes = {
     dy = 'number The change in y value.',
     acc_x = 'number|nil Accelerometer x value (if present).',
     acc_y = 'number|nil Accelerometer y value (if present).',
-    acc_z = 'number|nil Accelerometer z value (if present).'
+    acc_z = 'number|nil Accelerometer z value (if present).',
+    screen_x = 'number|nil The screen space x value of a pointer device, if present.',
+    screen_y = 'number|nil The screen space y value of a pointer device, if present.',
+    screen_dx = 'number|nil The change in screen space x value of a pointer device, if present.',
+    screen_dy = 'number|nil The index of the gamepad device that provided the input.'
   }
 }
 
