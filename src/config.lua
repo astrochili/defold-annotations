@@ -472,6 +472,9 @@ config.known_classes = {
   ['editor.tx'] = {
     is_global = true
   },
+  ['tilemap.tiles'] = {
+    is_global = true
+  },
   ['editor.bundle'] = {
     is_global = true
   },
