@@ -451,7 +451,26 @@ function generator.generate_api(modules, defold_version)
   terminal.delete_folder(config.api_folder)
   terminal.create_folder(config.api_folder)
 
+  local merged_modules = {}
+
   for _, module in ipairs(modules) do
+    local namespace = module.info.namespace
+    local merged_module = merged_modules[namespace]
+
+    if merged_module then
+      for _, element in ipairs(module.elements) do
+        table.insert(merged_module.elements, element)
+      end
+
+      if module.info.description ~= module.info.brief then
+        merged_module.info.description = module.info.description
+      end
+    else
+      merged_modules[namespace] = module
+    end
+  end
+
+  for _, module in pairs(merged_modules) do
     generate_api(module, defold_version)
   end
 
