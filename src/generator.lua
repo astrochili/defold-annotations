@@ -234,6 +234,7 @@ end
 ---@return string
 local function make_param(parameter, element)
   local name, is_optional = make_param_name(parameter, false, element)
+  local is_optional = is_optional or parameter.is_optional == 'True'
   local joined_types = make_param_types(name, parameter.types, is_optional, false, element)
   local description = make_param_description(parameter.doc)
 
