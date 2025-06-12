@@ -48,6 +48,11 @@ config.api_folder = 'api'
 ---Ignored docs
 ---Possible to use suffix `*`
 config.ignored_docs = {
+  -- Starting from 1.10.2
+  'dmsdk*',
+  'lua*',
+
+  -- Before 1.10.2
   'dm*',
   'debug_doc',
   'coroutine_doc',
