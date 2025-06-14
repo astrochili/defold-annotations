@@ -224,6 +224,7 @@ end
 ---@return string
 local function make_param_description(description)
   local result = decode_text(description)
+  result = result:gsub('^%s+', '')
   result = result:gsub('\n', '\n---')
   return result
 end
