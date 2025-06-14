@@ -126,16 +126,8 @@ end
 ---@param is_return boolean
 ---@param element element
 ---@return string name
----@return boolean is_optional
 local function make_param_name(parameter, is_return, element)
   local name = parameter.name
-  local is_optional = false
-
-  if name:sub(1, 1) == '[' and name:sub(-1) == ']' then
-    is_optional = true
-    name = name:sub(2, #name - 1)
-  end
-
   name = config.global_name_replacements[name] or name
 
   local local_replacements = config.local_name_replacements[element.name] or {}
@@ -147,23 +139,25 @@ local function make_param_name(parameter, is_return, element)
 
   name = name:gsub('-', '_')
 
-  return name, is_optional
+  return name
 end
 
 ---Make annotatable param types
 ---@param name string
 ---@param types table
----@param is_optional boolean
 ---@param is_return boolean
 ---@param element element
 ---@return string concated_string
-local function make_param_types(name, types, is_optional, is_return, element)
+local function make_param_types(name, types, is_return, element)
   local local_replacements = config.local_type_replacements[element.name] or {}
 
   for index = 1, #types do
     local type = types[index]
     local is_known = false
 
+    -- FIXME:
+    -- There are many unknown classes if you remove `or type`
+    -- Now `is_known` always is `true`
     local replacement = config.global_type_replacements[type] or type
     replacement = local_replacements[(is_return and 'return_' or 'param_') .. type .. '_' .. name] or replacement
 
@@ -201,18 +195,6 @@ local function make_param_types(name, types, is_optional, is_return, element)
     end
   end
 
-  if is_optional then
-    local is_already_optional = false
-
-    for _, type in ipairs(types) do
-      is_already_optional = is_already_optional or type == 'nil'
-    end
-
-    if not is_already_optional then
-      table.insert(types, 'nil')
-    end
-  end
-
   local result = table.concat(types, '|')
   result = #result > 0 and result or config.unknown_type
 
@@ -234,12 +216,12 @@ end
 ---@param element element
 ---@return string
 local function make_param(parameter, element)
-  local name, is_optional = make_param_name(parameter, false, element)
-  local is_optional = is_optional or parameter.is_optional == 'True'
-  local joined_types = make_param_types(name, parameter.types, is_optional, false, element)
+  local name = make_param_name(parameter, false, element)
+  local is_optional = parameter.is_optional == 'True'
+  local joined_types = make_param_types(name, parameter.types, false, element)
   local description = make_param_description(parameter.doc)
 
-  return '---@param ' .. name .. ' ' .. joined_types .. ' ' .. description
+  return '---@param ' .. name .. (is_optional and '? ' or ' ') .. joined_types .. ' ' .. description
 end
 
 ---Make an annotable return line
@@ -247,8 +229,8 @@ end
 ---@param element element
 ---@return string
 local function make_return(returnvalue, element)
-  local name, is_optional = make_param_name(returnvalue, true, element)
-  local types = make_param_types(name, returnvalue.types, is_optional, true, element)
+  local name = make_param_name(returnvalue, true, element)
+  local types = make_param_types(name, returnvalue.types, true, element)
   local description = make_param_description(returnvalue.doc)
 
   return '---@return ' .. types .. ' ' .. name .. ' ' .. description

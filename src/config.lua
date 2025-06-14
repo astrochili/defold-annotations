@@ -162,43 +162,43 @@ config.local_type_replacements = {
     ['param_transaction_step[_txs'] = 'editor.transaction_step[]'
   },
   ['editor.execute'] = {
-    param_table_options = '{ reload_resources:boolean|nil, out:string|nil, err:string|nil }'
+    param_table_options = '{ reload_resources?:boolean, out?:string, err?:string }'
   },
   ['editor.external_file_attributes'] = {
     return_table_attributes = '{ path:string, exists:boolean, is_file:boolean, is_directory:boolean }'
   },
   ['editor.prefs.schema.array'] = {
-    param_table_opts = '{ item:editor.schema, default:any[]|nil, scope:string|nil }'
+    param_table_opts = '{ item:editor.schema, default?:any[], scope?:string }'
   },
   ['editor.prefs.schema.boolean'] = {
-    param_table_opts = '{ default:boolean|nil, scope:string|nil }'
+    param_table_opts = '{ default?:boolean, scope?:string }'
   },
   ['editor.prefs.schema.enum'] = {
-    param_table_opts = '{ values:(nil|boolean|number|string)[], default:any|nil, scope:string|nil }'
+    param_table_opts = '{ values:(nil|boolean|number|string)[], default?:any, scope?:string }'
   },
   ['editor.prefs.schema.integer'] = {
-    param_table_opts = '{ default:integer|nil, scope:string|nil }'
+    param_table_opts = '{ default?:integer, scope?:string }'
   },
   ['editor.prefs.schema.keyword'] = {
-    param_table_opts = '{ default:string|nil, scope:string|nil }'
+    param_table_opts = '{ default?:string, scope?:string }'
   },
   ['editor.prefs.schema.number'] = {
-    param_table_opts = '{ default:number|nil, scope:string|nil }'
+    param_table_opts = '{ default?:number, scope?:string }'
   },
   ['editor.prefs.schema.object'] = {
-    param_table_opts = '{ properties:table<string, editor.schema>, default:table<string, editor.schema>|nil, scope:string|nil }'
+    param_table_opts = '{ properties:table<string, editor.schema>, default?:table<string, editor.schema>, scope?:string }'
   },
   ['editor.prefs.schema.object_of'] = {
-    param_table_opts = '{ key:editor.schema, val:editor.schema, default:table|nil, scope:string|nil }'
+    param_table_opts = '{ key:editor.schema, val:editor.schema, default?:table, scope?:string }'
   },
   ['editor.prefs.schema.set'] = {
-    param_table_opts = '{ item:editor.schema, default:table<editor.schema, boolean>|nil, scope:string|nil }'
+    param_table_opts = '{ item:editor.schema, default?:table<editor.schema, boolean>, scope?:string }'
   },
   ['editor.prefs.schema.string'] = {
-    param_table_opts = '{ default:string|nil, scope:string|nil }'
+    param_table_opts = '{ default?:string, scope?:string }'
   },
   ['editor.prefs.schema.tuple'] = {
-    param_table_opts = '{ items:editor.schema[], default:any[]|nil, scope:string|nil }'
+    param_table_opts = '{ items:editor.schema[], default?:any[], scope?:string }'
   },
   ['editor.resource_attributes'] = {
     return_table_value = '{ exists:boolean, is_file:boolean, is_directory:boolean }'
@@ -217,10 +217,10 @@ config.local_type_replacements = {
     return_table_clones = 'table<hash, node>'
   },
   ['gui.play_flipbook'] = {
-    param_table_play_properties = '{ offset:number|nil, playback_rate:number|nil }'
+    param_table_play_properties = '{ offset?:number, playback_rate?:number }'
   },
   ['gui.stop_particlefx'] = {
-    param_table_options = '{ clear:boolean|nil }'
+    param_table_options = '{ clear?:boolean }'
   },
   ['http.server.external_file_response'] = {
     ['param_table&lt;string,string&gt;_headers'] = 'table<string, string>'
@@ -235,25 +235,25 @@ config.local_type_replacements = {
     ['param_table&lt;string,string&gt;_headers'] = 'table<string, string>'
   },
   ['json.decode'] = {
-    param_table_options = '{ decode_null_as_userdata:boolean|nil }'
+    param_table_options = '{ decode_null_as_userdata?:boolean }'
   },
   ['json.encode'] = {
     param_table_options = '{ encode_empty_table_as_object:string }'
   },
   ['particlefx.stop'] = {
-    param_table_options = '{ clear:boolean|nil }'
+    param_table_options = '{ clear?:boolean }'
   },
   ['sprite.play_flipbook'] = {
-    param_table_options = '{ offset:number|nil, playback_rate:number|nil }'
+    param_table_options = '{ offset?:number, playback_rate?:number }'
   },
   ['sound.play'] = {
-    param_table_play_properties = '{ delay:number|nil, gain:number|nil, pan:number|nil, speed:number|nil }'
+    param_table_play_properties = '{ delay?:number, gain?:number, pan?:number, speed?:number }'
   },
   ['sound.stop'] = {
     param_table_stop_properties = '{ play_id:number }'
   },
   ['model.play_anim'] = {
-    param_table_play_properties = '{ blend_duration:number|nil, offset:number|nil, playback_rate:number|nil}'
+    param_table_play_properties = '{ blend_duration?:number, offset?:number, playback_rate?:number}'
   },
   ['image.load'] = {
     return_table_image = '{ width:number, height:number, type:constant, buffer:string }'
@@ -262,17 +262,17 @@ config.local_type_replacements = {
     return_table_image = '{ width:number, height:number, type:constant, buffer:buffer_data }'
   },
   ['physics.get_joint_properties'] = {
-    return_table_properties = '{ collide_connected:boolean|nil }'
+    return_table_properties = '{ collide_connected?:boolean }'
   },
   ['physics.raycast'] = {
-    param_table_options = '{ all:boolean|nil }',
+    param_table_options = '{ all?:boolean }',
     return_table_result = 'physics.raycast_response[]|physics.raycast_response'
   },
   ['physics.get_shape'] = {
-    return_table_table = '{ type:number|nil, diameter:number|nil, dimensions:vector3|nil, height:number|nil }'
+    return_table_table = '{ type?:number, diameter?:number, dimensions?:vector3, height?:number }'
   },
   ['physics.set_shape'] = {
-    param_table_table = '{ diameter:number|nil, dimensions:vector3|nil, height:number|nil }'
+    param_table_table = '{ diameter?:number, dimensions?:vector3, height?:number }'
   },
   ['resource.create_atlas'] = {
     param_table_table = 'resource.atlas'
@@ -287,54 +287,54 @@ config.local_type_replacements = {
     return_table_table = '{ handle:resource_handle, attachments:{ handle:resource_handle, width:number, height:number, depth:number, mipmaps:number, type:number, buffer_type:number, texture:hash }[] }'
   },
   ['resource.create_sound_data'] = {
-    param_table_options = '{ data:string|nil, filesize:number|nil, partial:boolean|nil }'
+    param_table_options = '{ data?:string, filesize?:number, partial?:boolean }'
   },
   ['resource.create_texture'] = {
-    param_table_table = '{ type:number, width:number, height:number, depth:number, format:number, flags:number|nil, max_mipmaps:number|nil, compression_type:number|nil}'
+    param_table_table = '{ type:number, width:number, height:number, depth:number, format:number, flags?:number, max_mipmaps?:number, compression_type?:number}'
   },
   ['resource.create_texture_async'] = {
-    param_table_table = '{ type:number, width:number, height:number, depth:number, format:number, flags:number|nil, max_mipmaps:number|nil, compression_type:number|nil}'
+    param_table_table = '{ type:number, width:number, height:number, depth:number, format:number, flags?:number, max_mipmaps?:number, compression_type?:number}'
   },
   ['resource.set_texture'] = {
-    param_table_table = '{ type:number, width:number, height:number, format:number, x:number|nil, y:number|nil, z:number|nil, mipmap:number|nil, compression_type:number|nil}'
+    param_table_table = '{ type:number, width:number, height:number, format:number, x?:number, y?:number, z?:number, mipmap?:number, compression_type?:number}'
   },
   ['resource.get_texture_info'] = {
     return_table_table = '{ handle:resource_handle, width:number, height:number, depth:number, mipmaps:number, flags:number, type:number }'
   },
   ['resource.get_text_metrics'] = {
-    param_table_options = '{ width:number|nil, leading:number|nil, tracking:number|nil, line_break:boolean|nil}',
+    param_table_options = '{ width?:number, leading?:number, tracking?:number, line_break?:boolean}',
     return_table_metrics = '{ width:number, height:number, max_ascent:number, max_descent:number }'
   },
   ['resource.create_buffer'] = {
-    param_table_table = '{ buffer:buffer_data, transfer_ownership:boolean|nil }'
+    param_table_table = '{ buffer:buffer_data, transfer_ownership?:boolean }'
   },
   ['resource.set_buffer'] = {
-    param_table_table = '{ transfer_ownership: boolean|nil }'
+    param_table_table = '{ transfer_ownership?: boolean }'
   },
   ['render.draw'] = {
-    param_table_options = '{ frustum:matrix4|nil, frustum_planes:number|nil, constants:constant_buffer|nil }'
+    param_table_options = '{ frustum?:matrix4, frustum_planes?:number, constants?:constant_buffer }'
   },
   ['render.draw_debug3d'] = {
-    param_table_options = '{ frustum:matrix4|nil, frustum_planes:number|nil }'
+    param_table_options = '{ frustum?:matrix4, frustum_planes?:number }'
   },
   ['render.predicate'] = {
     param_table_tags = '(string|hash)[]'
   },
   ['render.render_target'] = {
-    param_table_parameters = 'table<number, { format:number, width:number, height:number, min_filter:number|nil, mag_filter:number|nil, u_wrap:number|nil, v_wrap:number|nil, flags:number|nil}>'
+    param_table_parameters = 'table<number, { format:number, width:number, height:number, min_filter?:number, mag_filter?:number, u_wrap?:number, v_wrap?:number, flags?:number}>'
   },
   ['render.set_camera'] = {
-    param_table_options = '{ use_frustum:boolean|nil }'
+    param_table_options = '{ use_frustum?:boolean }'
   },
   ['render.set_render_target'] = {
-    param_table_options = '{ transient:number[]|nil }'
+    param_table_options = '{ transient?:number[] }'
   },
   ['sound.get_groups'] = {
     return_table_groups = 'hash[]'
   },
   ['sys.get_sys_info'] = {
-    param_table_options = '{ ignore_secure:boolean|nil }',
-    return_table_sys_info = '{ device_model:string|nil, manufacturer:string|nil, system_name:string, system_version:string, api_version:string, language:string, device_language:string, territory:string, gmt_offset:number, device_ident:string|nil, user_agent:string|nil }'
+    param_table_options = '{ ignore_secure?:boolean }',
+    return_table_sys_info = '{ device_model?:string, manufacturer?:string, system_name:string, system_version:string, api_version:string, language:string, device_language:string, territory:string, gmt_offset:number, device_ident?:string, user_agent?:string }'
   },
   ['sys.get_application_info'] = {
     return_table_app_info = '{ installed:boolean }'
@@ -343,23 +343,23 @@ config.local_type_replacements = {
     return_table_engine_info = '{ version:string, version_sha1:string, is_debug:boolean }'
   },
   ['sys.get_ifaddrs'] = {
-    return_table_ifaddrs = '{ name:string, address:string|nil, mac:string|nil, up:boolean, running:boolean }'
+    return_table_ifaddrs = '{ name:string, address?:string, mac?:string, up:boolean, running:boolean }'
   },
   ['sys.open_url'] = {
-    param_table_attributes = '{ target:string|nil, name:string|nil }'
+    param_table_attributes = '{ target?:string, name?:string }'
   },
   ['timer.get_info'] = {
     return_table_data = '{ time_remaining:number, delay:number, repeating:boolean }'
   },
   ['vmath.euler_to_quat'] = {
-    param_number_y = 'number|nil',
-    param_number_z = 'number|nil'
+    param_number_y = 'number?',
+    param_number_z = 'number?'
   },
   ['vmath.vector'] = {
     param_table_t = 'number[]'
   },
   ['zip.pack'] = {
-    param_table_opts = '{ method:string|nil, level:integer|nil }'
+    param_table_opts = '{ method?:string, level?:integer }'
   }
 }
 
@@ -516,10 +516,10 @@ config.known_classes = {
     height = 'integer The height of the animation',
     frame_start = 'integer Index to the first geometry of the animation. Indices are lua based and must be in the range of 1 .. in atlas.',
     frame_end = 'integer Index to the last geometry of the animation (non-inclusive). Indices are lua based and must be in the range of 1 .. in atlas.',
-    playback = 'constant|nil Optional playback mode of the animation, the default value is go.PLAYBACK_ONCE_FORWARD',
-    fps = 'integer|nil Optional fps of the animation, the default value is 30',
-    flip_vertical = 'boolean|nil Optional flip the animation vertically, the default value is false',
-    flip_horizontal = 'boolean|nil Optional flip the animation horizontally, the default value is false'
+    ['playback?'] = 'constant Optional playback mode of the animation, the default value is go.PLAYBACK_ONCE_FORWARD',
+    ['fps?'] = 'integer Optional fps of the animation, the default value is 30',
+    ['flip_vertical?'] = 'boolean Optional flip the animation vertically, the default value is false',
+    ['flip_horizontal?'] = 'boolean Optional flip the animation horizontally, the default value is false'
   },
   ['resource.geometry'] = {
     id = 'string The name of the geometry. Used when matching animations between multiple atlases',
@@ -536,21 +536,21 @@ config.known_classes = {
     request_id = 'number The id supplied when the ray cast was requested'
   },
   ['on_input.action'] = {
-    value = 'number|nil The amount of input given by the user. This is usually 1 for buttons and 0-1 for analogue inputs. This is not present for mouse movement.',
-    pressed = 'boolean|nil If the input was pressed this frame. This is not present for mouse movement.',
-    released = 'boolean|nil If the input was released this frame. This is not present for mouse movement.',
-    repeated = 'boolean|nil If the input was repeated this frame. This is similar to how a key on a keyboard is repeated when you hold it down. This is not present for mouse movement.',
-    x = 'number|nil The x value of a pointer device, if present.',
-    y = 'number|nil The y value of a pointer device, if present.',
-    screen_x = 'number|nil The screen space x value of a pointer device, if present.',
-    screen_y = 'number|nil The screen space y value of a pointer device, if present.',
-    dx = 'number|nil The change in x value of a pointer device, if present.',
-    dy = 'number|nil The change in y value of a pointer device, if present.',
-    screen_dx = 'number|nil The change in screen space x value of a pointer device, if present.',
-    gamepad = 'integer|nil The change in screen space y value of a pointer device, if present.',
-    screen_dy = 'number|nil The index of the gamepad device that provided the input.',
-    touch = 'on_input.touch[]|nil List of touch input, one element per finger, if present.',
-    text = 'string|nil The text entered with the `text` action, if present'
+    ['value?'] = 'number The amount of input given by the user. This is usually 1 for buttons and 0-1 for analogue inputs. This is not present for mouse movement.',
+    ['pressed?'] = 'boolean If the input was pressed this frame. This is not present for mouse movement.',
+    ['released?'] = 'boolean If the input was released this frame. This is not present for mouse movement.',
+    ['repeated?'] = 'boolean If the input was repeated this frame. This is similar to how a key on a keyboard is repeated when you hold it down. This is not present for mouse movement.',
+    ['x?'] = 'number The x value of a pointer device, if present.',
+    ['y?'] = 'number The y value of a pointer device, if present.',
+    ['screen_x?'] = 'number The screen space x value of a pointer device, if present.',
+    ['screen_y?'] = 'number The screen space y value of a pointer device, if present.',
+    ['dx?'] = 'number The change in x value of a pointer device, if present.',
+    ['dy?'] = 'number The change in y value of a pointer device, if present.',
+    ['screen_dx?'] = 'number The change in screen space x value of a pointer device, if present.',
+    ['gamepad?'] = 'integer The change in screen space y value of a pointer device, if present.',
+    ['screen_dy?'] = 'number The index of the gamepad device that provided the input.',
+    ['touch?'] = 'on_input.touch[] List of touch input, one element per finger, if present.',
+    ['text?'] = 'string The text entered with the `text` action, if present'
   },
   ['on_input.touch'] = {
     id = 'number A number identifying the touch input during its duration.',
@@ -561,13 +561,13 @@ config.known_classes = {
     y = 'number The y touch location.',
     dx = 'number The change in x value.',
     dy = 'number The change in y value.',
-    acc_x = 'number|nil Accelerometer x value (if present).',
-    acc_y = 'number|nil Accelerometer y value (if present).',
-    acc_z = 'number|nil Accelerometer z value (if present).',
-    screen_x = 'number|nil The screen space x value of a pointer device, if present.',
-    screen_y = 'number|nil The screen space y value of a pointer device, if present.',
-    screen_dx = 'number|nil The change in screen space x value of a pointer device, if present.',
-    screen_dy = 'number|nil The index of the gamepad device that provided the input.'
+    ['acc_x?'] = 'number Accelerometer x value (if present).',
+    ['acc_y?'] = 'number Accelerometer y value (if present).',
+    ['acc_z?'] = 'number Accelerometer z value (if present).',
+    ['screen_x?'] = 'number The screen space x value of a pointer device, if present.',
+    ['screen_y?'] = 'number The screen space y value of a pointer device, if present.',
+    ['screen_dx?'] = 'number The change in screen space x value of a pointer device, if present.',
+    ['screen_dy?'] = 'number The index of the gamepad device that provided the input.'
   }
 }
 
