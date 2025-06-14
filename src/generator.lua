@@ -155,10 +155,7 @@ local function make_param_types(name, types, is_return, element)
     local type = types[index]
     local is_known = false
 
-    -- FIXME:
-    -- There are many unknown classes if you remove `or type`
-    -- Now `is_known` always is `true`
-    local replacement = config.global_type_replacements[type] or type
+    local replacement = config.global_type_replacements[type]
     replacement = local_replacements[(is_return and 'return_' or 'param_') .. type .. '_' .. name] or replacement
 
     if replacement then
@@ -184,6 +181,12 @@ local function make_param_types(name, types, is_return, element)
 
     if not is_known then
       types[index] = config.unknown_type
+
+      if os.getenv('LOCAL_LUA_DEBUGGER_VSCODE') == '1' then
+        assert(nil, 'Unknown type `' .. type .. '`')
+      else
+        print('!!! WARNING: Unknown type `' .. type .. '` has been replaced with `' .. config.unknown_type .. '`')
+      end
     else
       type = type:gsub('function%(%)', 'function')
 

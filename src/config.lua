@@ -49,8 +49,8 @@ config.api_folder = 'api'
 ---Possible to use suffix `*`
 config.ignored_docs = {
   -- Starting from 1.10.2
-  'dmsdk*',
-  'lua*',
+  'dmsdk-*',
+  'lua_*',
 
   -- Before 1.10.2
   'dm*',
@@ -113,7 +113,11 @@ config.global_type_replacements = {
   vecto4 = 'vector4',
   schema = 'editor.schema',
   component = 'editor.component',
+  tiles = 'editor.tiles',
   transaction_step = 'editor.transaction_step',
+  command = 'editor.command',
+  response = 'http.response',
+  route = 'http.route'
 }
 
 --- Local replacements for param types
@@ -157,6 +161,12 @@ config.local_type_replacements = {
   },
   ['editor.bundle.texture_compression_grid_row'] = {
     ['return_component[_row'] = 'editor.component[]'
+  },
+  ['editor.bundle.assoc_in'] = {
+    ['param_any[_keys'] = 'any[]'
+  },
+  ['editor.bundle.select_box'] = {
+    ['param_any[_options'] = 'any[]'
   },
   ['editor.transact'] = {
     ['param_transaction_step[_txs'] = 'editor.transaction_step[]'
@@ -209,6 +219,9 @@ config.local_type_replacements = {
   },
   ['editor.ui.use_state'] = {
     ['param_...any_...'] = 'any'
+  },
+  ['editor.ui.show_resource_dialog'] = {
+    ['return_string[_value'] = 'string[]|nil'
   },
   ['gui.clone_tree'] = {
     return_table_clones = 'table<hash, node>'
@@ -601,7 +614,11 @@ config.known_aliases = {
 
   ['editor.schema'] = 'userdata',
   ['editor.component'] = 'userdata',
-  ['editor.transaction_step'] = 'userdata'
+  ['editor.transaction_step'] = 'userdata',
+  ['editor.tiles'] = 'userdata',
+  ['editor.command'] = 'userdata',
+  ['http.response'] = 'userdata',
+  ['http.route'] = 'userdata'
 }
 
 config.disabled_diagnostics = {
