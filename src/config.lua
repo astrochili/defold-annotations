@@ -593,7 +593,7 @@ config.known_aliases = {
   quaternion = 'vector4',
   hash = 'userdata',
   node = 'userdata',
-  constant = 'userdata',
+  constant = 'number',
   vector = 'userdata',
 
   resource_data = 'userdata',
