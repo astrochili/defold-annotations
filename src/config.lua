@@ -12,7 +12,7 @@ local config = {}
 config.folder_separator = package.config:sub(1, 1)
 
 ---Clean temporary files after completion
-config.clean_traces = true
+config.clean_traces = false
 
 ---Url of this project on github
 config.generator_url = 'github.com/astrochili/defold-annotations'
@@ -102,8 +102,8 @@ config.global_type_replacements = {
   resource = 'resource_data',
   buffer = 'buffer_data',
   bufferstream = 'buffer_stream',
-  handle = 'resource_handle',
-  texture = 'resource_handle',
+  handle = 'number',
+  texture = 'number',
   predicate = 'render_predicate',
   client = 'socket_client',
   master = 'socket_master',
@@ -117,7 +117,10 @@ config.global_type_replacements = {
   transaction_step = 'editor.transaction_step',
   command = 'editor.command',
   response = 'http.response',
-  route = 'http.route'
+  route = 'http.route',
+  ['type:graphics.*'] = 'constant',
+  ['graphics.*'] = 'constant',
+  ['go.*'] = 'constant',
 }
 
 --- Local replacements for param types
@@ -297,7 +300,7 @@ config.local_type_replacements = {
     param_table_table = 'resource.atlas'
   },
   ['resource.get_render_target_info'] = {
-    return_table_table = '{ handle:resource_handle, attachments:{ handle:resource_handle, width:number, height:number, depth:number, mipmaps:number, type:number, buffer_type:number, texture:hash }[] }'
+    return_table_table = '{ handle:number, attachments:{ handle:number, width:number, height:number, depth:number, mipmaps:number, type:number, buffer_type:number, texture:hash }[] }'
   },
   ['resource.create_sound_data'] = {
     param_table_options = '{ data?:string, filesize?:number, partial?:boolean }'
@@ -312,7 +315,7 @@ config.local_type_replacements = {
     param_table_table = '{ type:number, width:number, height:number, format:number, x?:number, y?:number, z?:number, mipmap?:number, compression_type?:number}'
   },
   ['resource.get_texture_info'] = {
-    return_table_table = '{ handle:resource_handle, width:number, height:number, depth:number, mipmaps:number, flags:number, type:number }'
+    return_table_table = '{ handle:number, width:number, height:number, depth:number, mipmaps:number, flags:number, type:number }'
   },
   ['resource.get_text_metrics'] = {
     param_table_options = '{ width?:number, leading?:number, tracking?:number, line_break?:boolean}',
@@ -600,7 +603,6 @@ config.known_aliases = {
   constant_buffer = 'userdata',
   render_target = 'string|userdata',
   render_predicate = 'userdata',
-  resource_handle = 'number|userdata',
   buffer_stream = 'userdata',
   buffer_data = 'userdata',
 

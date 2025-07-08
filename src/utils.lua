@@ -71,24 +71,49 @@ function utils.sorted_keys(dictionary)
   return keys
 end
 
+---Check if the value matched to the mask `text` or `text_*`
+---@param value string
+---@param mask string
+---@return boolean
+function utils.match(value, mask)
+    if mask:sub(-1) == '*' then
+      local list_prefix = mask:sub(1, #mask - 1)
+      return value:sub(1, #list_prefix) == list_prefix
+    else
+      return value == mask
+    end
+end
+
 ---Check if an item is present in the black list, including by the `*` suffix rule.
 ---@param list string[]
 ---@param item string
 ---@return boolean is_blacklisted
 function utils.is_blacklisted(list, item)
   for _, list_element in ipairs(list) do
-    if list_element:sub(-1) == '*' then
-      local list_prefix = list_element:sub(1, #list_element - 1)
-
-      if item:sub(1, #list_prefix) == list_prefix then
-        return true
-      end
-    elseif item == list_element then
+    if utils.match(item, list_element) then
       return true
     end
   end
 
   return false
+end
+
+---Returns the array copy without duplicates
+---@generic T
+---@param t table<T>
+---@return table<T>
+function utils.unique(t)
+  local result = {}
+  local seen = {}
+
+  for _, item in ipairs(t) do
+    if not seen[item] then
+      table.insert(result, item)
+      seen[item] = true
+    end
+  end
+
+  return result
 end
 
 return utils

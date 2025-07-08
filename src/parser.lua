@@ -23,7 +23,7 @@ local function parse_path(json_path)
   local filename = json_path
 
   filename = filename:sub(#config.doc_folder + 2)
-  filename = filename:sub(1, #filename - (1 + #config.json_extension))
+  filename = filename:sub(1, #filename - (1 + #config.json_extension)) or filename
 
   if utils.is_blacklisted(config.ignored_docs, filename) then
     print('[-] The file "' .. json_path .. '" is skipped because it\'s on the ignore list')

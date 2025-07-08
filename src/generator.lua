@@ -154,8 +154,14 @@ local function make_param_types(name, types, is_return, element)
   for index = 1, #types do
     local type = types[index]
     local is_known = false
+    local replacement
 
-    local replacement = config.global_type_replacements[type]
+    for key, value in pairs(config.global_type_replacements) do
+      if utils.match(type, key) then
+        replacement = value
+      end
+    end
+
     replacement = local_replacements[(is_return and 'return_' or 'param_') .. type .. '_' .. name] or replacement
 
     if replacement then
@@ -198,7 +204,7 @@ local function make_param_types(name, types, is_return, element)
     end
   end
 
-  local result = table.concat(types, '|')
+  local result = table.concat(utils.unique(types), '|')
   result = #result > 0 and result or config.unknown_type
 
   return result
@@ -366,6 +372,7 @@ local function generate_api(module, defold_version)
   local makers = {
     FUNCTION = make_func,
     VARIABLE = make_const,
+    CONSTANT = make_const,
     BASIC_CLASS = make_class,
     BASIC_ALIAS = make_alias
   }
