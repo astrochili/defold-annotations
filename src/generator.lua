@@ -448,6 +448,13 @@ function generator.generate_api(modules, defold_version)
 
   for _, module in ipairs(modules) do
     local namespace = module.info.namespace
+
+    -- The `font` module doesn't have any meta values
+    if #namespace == 0 and #module.elements > 0 then
+      namespace = module.elements[1].name:match('([^%.]+)')
+      module.info.namespace = namespace
+    end
+
     local merged_module = merged_modules[namespace]
 
     if merged_module then

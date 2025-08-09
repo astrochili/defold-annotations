@@ -146,6 +146,9 @@ config.local_type_replacements = {
   ['crash.get_modules'] = {
     return_table_modules = '{ name:string, address:string }[]'
   },
+  ['editor.create_resources'] = {
+    ['param_string[_resources'] = 'string[]'
+  },
   ['editor.bundle.check_boxes_grid_row'] = {
     ['return_component[_row'] = 'editor.component[]'
   },
