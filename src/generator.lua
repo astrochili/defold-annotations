@@ -18,16 +18,15 @@ local generator = {}
 
 -- Apply a list of inline tag rules, replacing html tags with their corresponding markdown syntax
 ---@param s string
----@param rules table
+---@param inline_rules table
 ---@return string
-local function apply_inline_rules(s, rules)
-  for _, rule in ipairs(rules) do
-    for _, tag in ipairs(rule.tags) do
+local function apply_inline_rules(s, inline_rules)
+  for tag, markdown in pairs(inline_rules) do
       s = s:gsub('<' .. tag .. '>(.-)</' .. tag .. '>', function(inner)
-        return rule.wrap .. inner .. rule.wrap
+        return markdown .. inner .. markdown
       end)
-    end
   end
+
   return s
 end
 
@@ -37,13 +36,15 @@ end
 local function decode_text(text)
   local result = text or ''
 
-  local formatRules = {
-    { tags = { 'code' },        wrap = '`' },
-    { tags = { 'strong', 'b' }, wrap = '**' },
-    { tags = { 'em', 'i' },     wrap = '*' },
+  local inline_tags = {
+    code = '`',
+    strong = '**',
+    b = '**',
+    em = '*',
+    i = '*'
   }
 
-  result = apply_inline_rules(result, formatRules)
+  result = apply_inline_rules(result, inline_tags)
 
   -- Strip any remaining html tags
   result = result:gsub('%b<>', '')
