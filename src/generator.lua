@@ -16,11 +16,38 @@ local generator = {}
 --
 -- Local
 
----Decode text to get rid of html tags and entities
+-- Apply a list of inline tag rules, replacing html tags with their corresponding markdown syntax
+---@param s string
+---@param rules table
+---@return string
+local function apply_inline_rules(s, rules)
+  for _, rule in ipairs(rules) do
+    for _, tag in ipairs(rule.tags) do
+      s = s:gsub('<' .. tag .. '>(.-)</' .. tag .. '>', function(inner)
+        return rule.wrap .. inner .. rule.wrap
+      end)
+    end
+  end
+  return s
+end
+
+---Decode text to get rid of unnecessary html tags and entities
 ---@param text string
 ---@return string
 local function decode_text(text)
-  local result = text:gsub('%b<>', '')
+  local result = text or ''
+
+  local formatRules = {
+    { tags = { 'code' },        wrap = '`' },
+    { tags = { 'strong', 'b' }, wrap = '**' },
+    { tags = { 'em', 'i' },     wrap = '*' },
+  }
+
+  result = apply_inline_rules(result, formatRules)
+
+  -- Strip any remaining html tags
+  result = result:gsub('%b<>', '')
+
   local decoded_result = html_entities.decode(result)
 
   if type(decoded_result) == 'string' then
