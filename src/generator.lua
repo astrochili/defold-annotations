@@ -21,10 +21,18 @@ local generator = {}
 ---@param inline_rules table
 ---@return string
 local function apply_inline_rules(s, inline_rules)
-  for tag, markdown in pairs(inline_rules) do
-      s = s:gsub('<' .. tag .. '>(.-)</' .. tag .. '>', function(inner)
-        return markdown .. inner .. markdown
-      end)
+  for tag, rule in pairs(inline_rules) do
+    local markdown = rule
+    local wrap_both_sides = true
+
+    if type(rule) == 'table' then
+      markdown = rule.markdown
+      wrap_both_sides = rule.wrap_both_sides
+    end
+
+    s = s:gsub('<' .. tag .. '>(.-)</' .. tag .. '>', function(inner)
+      return wrap_both_sides and (markdown .. inner .. markdown) or (markdown .. inner)
+    end)
   end
 
   return s
@@ -41,7 +49,8 @@ local function decode_text(text)
     strong = '**',
     b = '**',
     em = '*',
-    i = '*'
+    i = '*',
+    li = { markdown = '* ', wrap_both_sides = false },
   }
 
   result = apply_inline_rules(result, inline_tags)
