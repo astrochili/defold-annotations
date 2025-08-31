@@ -1,6 +1,7 @@
 # System
 .DS_Store
 Thumbs.db
+.idea/
 
 # Temporary
 /doc

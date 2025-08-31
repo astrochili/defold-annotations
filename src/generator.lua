@@ -50,7 +50,7 @@ local function decode_text(text)
     b = '**',
     em = '*',
     i = '*',
-    li = { markdown = '* ', wrap_both_sides = false },
+    li = { markdown = '- ', wrap_both_sides = false },
   }
 
   result = apply_inline_rules(result, inline_tags)
