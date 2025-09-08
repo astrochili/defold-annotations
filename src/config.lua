@@ -12,7 +12,7 @@ local config = {}
 config.folder_separator = package.config:sub(1, 1)
 
 ---Clean temporary files after completion
-config.clean_traces = false
+config.clean_traces = true
 
 ---Url of this project on github
 config.generator_url = 'github.com/astrochili/defold-annotations'
@@ -451,6 +451,9 @@ config.known_classes = {
   ['zip.METHOD'] = {
     is_global = true
   },
+  ['zip.ON_CONFLICT'] = {
+    is_global = true
+  },
   ['socket.dns'] = {
     is_global = true
   },
@@ -542,6 +545,11 @@ config.known_classes = {
   },
   ['resource.geometry'] = {
     id = 'string The name of the geometry. Used when matching animations between multiple atlases',
+    width = 'number The width of the image the sprite geometry represents',
+    height = 'number The height of the image the sprite geometry represents',
+    pivot_x = 'number The pivot x value of the image in unit coords. (0,0) is upper left corner, (1,1) is bottom right. Default is 0.5.',
+    pivot_y = 'number The pivot y value of the image in unit coords. (0,0) is upper left corner, (1,1) is bottom right. Default is 0.5.',
+    rotated = 'boolean Whether the image is rotated 90 degrees counter-clockwise in the atlas. This affects UV coordinate generation for proper rendering. Default is false.',
     vertices = 'number[] A list of the vertices in texture space of the geometry in the form { px0, py0, px1, py1, ..., pxn, pyn }',
     uvs = 'number[] A list of the uv coordinates in texture space of the geometry in the form of { u0, v0, u1, v1, ..., un, vn }',
     indices = 'number[] A list of the indices of the geometry in the form { i0, i1, i2, ..., in }. Each tripe in the list represents a triangle.'
