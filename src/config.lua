@@ -121,6 +121,7 @@ config.global_type_replacements = {
   ['type:graphics.*'] = 'constant',
   ['graphics.*'] = 'constant',
   ['go.*'] = 'constant',
+  message = 'editor.message'
 }
 
 --- Local replacements for param types
@@ -229,6 +230,15 @@ config.local_type_replacements = {
   ['editor.ui.show_resource_dialog'] = {
     ['return_string[_value'] = 'string[]|nil'
   },
+  ['localization.and_list'] = {
+    ['param_any[_items'] = '(nil|boolean|number|string|editor.message)[]'
+  },
+  ['localization.or_list'] = {
+    ['param_any[_items'] = '(nil|boolean|number|string|editor.message)[]'
+  },
+  ['localization.concat'] = {
+    ['param_any[_items'] = '(nil|boolean|number|string|editor.message)[]'
+  },
   ['gui.clone_tree'] = {
     return_table_clones = 'table<hash, node>'
   },
@@ -276,6 +286,9 @@ config.local_type_replacements = {
   },
   ['model.play_anim'] = {
     param_table_play_properties = '{ blend_duration?:number, offset?:number, playback_rate?:number}'
+  },
+  ['image.get_astc_header'] = {
+    return_table_table = '{ width:number, height:number, depth:number, block_size_x:number, block_size_y:number, block_size_z:number }'
   },
   ['image.load'] = {
     return_table_image = '{ width:number, height:number, type:constant, buffer:string }'
@@ -509,6 +522,9 @@ config.known_classes = {
   ['editor.bundle'] = {
     is_global = true
   },
+  ['localization'] = {
+    is_global = true
+  },
   matrix4 = {
     m00 = 'number',
     m01 = 'number',
@@ -634,6 +650,7 @@ config.known_aliases = {
   ['editor.transaction_step'] = 'userdata',
   ['editor.tiles'] = 'userdata',
   ['editor.command'] = 'userdata',
+  ['editor.message'] = 'userdata',
   ['http.response'] = 'userdata',
   ['http.route'] = 'userdata'
 }
