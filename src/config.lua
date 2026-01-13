@@ -118,21 +118,32 @@ config.global_type_replacements = {
   command = 'editor.command',
   response = 'http.response',
   route = 'http.route',
-  ['type:graphics.*'] = 'constant',
-  ['graphics.*'] = 'constant',
-  ['go.*'] = 'constant',
 }
 
 --- Local replacements for param types
 config.local_type_replacements = {
   ['buffer.create'] = {
-    param_table_declaration = '{ name:hash|string, type:constant, count:number }[]'
+    param_table_declaration = '{ name:hash|string, type:buffer.VALUE_TYPE, count:number }[]'
   },
   ['buffer.set_metadata'] = {
-    param_table_values = 'number[]'
+    param_table_values = 'number[]',
+    param_constant_value_type = 'buffer.VALUE_TYPE|integer'
   },
   ['buffer.get_metadata'] = {
-    return_table_values = 'number[]'
+    return_table_values = 'number[]',
+    return_constant_value_type = 'buffer.VALUE_TYPE|integer'
+  },
+  ['gui.cancel_animations'] = {
+    param_constant_property = 'gui.PROP'
+  },
+  ['gui.get'] = {
+    param_constant_property = 'gui.PROP'
+  },
+  ['gui.set'] = {
+    param_constant_property = 'gui.PROP'
+  },
+  ['render.enable_texture'] = {
+    param_constant_buffer_type = 'graphics.BUFFER_TYPE|integer'
   },
   ['collectionfactory.create'] = {
     return_table_ids = 'table<hash, hash>'
@@ -278,10 +289,10 @@ config.local_type_replacements = {
     param_table_play_properties = '{ blend_duration?:number, offset?:number, playback_rate?:number}'
   },
   ['image.load'] = {
-    return_table_image = '{ width:number, height:number, type:constant, buffer:string }'
+    return_table_image = '{ width:number, height:number, type:image.TYPE, buffer:string }'
   },
   ['image.load_buffer'] = {
-    return_table_image = '{ width:number, height:number, type:constant, buffer:buffer_data }'
+    return_table_image = '{ width:number, height:number, type:image.TYPE, buffer:buffer_data }'
   },
   ['physics.get_joint_properties'] = {
     return_table_properties = '{ collide_connected?:boolean }'
