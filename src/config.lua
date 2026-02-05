@@ -118,20 +118,23 @@ config.global_type_replacements = {
   command = 'editor.command',
   response = 'http.response',
   route = 'http.route',
-  message = 'editor.message'
+  message = 'editor.message',
+  b2World = 'b2d.world',
+  b2Body = 'b2d.body',
+  b2BodyType = 'b2d.body.B2',
 }
 
 --- Local replacements for param types
 config.local_type_replacements = {
   ['buffer.create'] = {
-    param_table_declaration = '{ name:hash|string, type:buffer.VALUE_TYPE, count:number }[]'
+    param_table_declaration = '[{ name:hash|string, type:buffer.VALUE_TYPE|integer, count:number }]'
   },
   ['buffer.set_metadata'] = {
-    param_table_values = 'number[]',
+    param_table_values = '[number]',
     param_constant_value_type = 'buffer.VALUE_TYPE|integer'
   },
   ['buffer.get_metadata'] = {
-    return_table_values = 'number[]',
+    return_table_values = '[number]',
     return_constant_value_type = 'buffer.VALUE_TYPE|integer'
   },
   ['gui.cancel_animations'] = {
@@ -150,44 +153,44 @@ config.local_type_replacements = {
     return_table_ids = 'table<hash, hash>'
   },
   ['collectionproxy.get_resources'] = {
-    return_table_resources = 'string[]'
+    return_table_resources = '[string]'
   },
   ['collectionproxy.missing_resources'] = {
-    return_table_resources = 'string[]'
+    return_table_resources = '[string]'
   },
   ['crash.get_modules'] = {
-    return_table_modules = '{ name:string, address:string }[]'
+    return_table_modules = '[{ name:string, address:string }]'
   },
   ['editor.create_resources'] = {
-    ['param_string[_resources'] = 'string[]'
+    ['param_string[_resources'] = '[string]'
   },
   ['editor.bundle.check_boxes_grid_row'] = {
-    ['return_component[_row'] = 'editor.component[]'
+    ['return_component[_row'] = '[editor.component]'
   },
   ['editor.bundle.common_variant_grid_row'] = {
-    ['return_component[_row'] = 'editor.component[]'
+    ['return_component[_row'] = '[editor.component]'
   },
   ['editor.bundle.desktop_variant_grid_row'] = {
-    ['return_component[_row'] = 'editor.component[]'
+    ['return_component[_row'] = '[editor.component]'
   },
   ['editor.bundle.dialog'] = {
-    ['param_component[_rows'] = 'editor.component[]'
+    ['param_component[_rows'] = '[editor.component]'
   },
   ['editor.bundle.grid_row'] = {
-    ['param_component[_content'] = 'editor.component[]',
-    ['return_component[_row'] = 'editor.component[]'
+    ['param_component[_content'] = '[editor.component]',
+    ['return_component[_row'] = '[editor.component]'
   },
   ['editor.bundle.texture_compression_grid_row'] = {
-    ['return_component[_row'] = 'editor.component[]'
+    ['return_component[_row'] = '[editor.component]'
   },
   ['editor.bundle.assoc_in'] = {
-    ['param_any[_keys'] = 'any[]'
+    ['param_any[_keys'] = '[any]'
   },
   ['editor.bundle.select_box'] = {
-    ['param_any[_options'] = 'any[]'
+    ['param_any[_options'] = '[any]'
   },
   ['editor.transact'] = {
-    ['param_transaction_step[_txs'] = 'editor.transaction_step[]'
+    ['param_transaction_step[_txs'] = '[editor.transaction_step]'
   },
   ['editor.execute'] = {
     param_table_options = '{ reload_resources?:boolean, out?:string, err?:string }'
@@ -196,13 +199,13 @@ config.local_type_replacements = {
     return_table_attributes = '{ path:string, exists:boolean, is_file:boolean, is_directory:boolean }'
   },
   ['editor.prefs.schema.array'] = {
-    param_table_opts = '{ item:editor.schema, default?:any[], scope?:string }'
+    param_table_opts = '{ item:editor.schema, default?:[any], scope?:string }'
   },
   ['editor.prefs.schema.boolean'] = {
     param_table_opts = '{ default?:boolean, scope?:string }'
   },
   ['editor.prefs.schema.enum'] = {
-    param_table_opts = '{ values:(nil|boolean|number|string)[], default?:any, scope?:string }'
+    param_table_opts = '{ values:[nil|boolean|number|string], default?:any, scope?:string }'
   },
   ['editor.prefs.schema.integer'] = {
     param_table_opts = '{ default?:integer, scope?:string }'
@@ -219,6 +222,9 @@ config.local_type_replacements = {
   ['editor.prefs.schema.object_of'] = {
     param_table_opts = '{ key:editor.schema, val:editor.schema, default?:table, scope?:string }'
   },
+  ['editor.prefs.schema.one_of'] = {
+    param_table_opts = '{ schemas:[editor.schema], default?:any, scope?:string }'
+  },
   ['editor.prefs.schema.set'] = {
     param_table_opts = '{ item:editor.schema, default?:table<editor.schema, boolean>, scope?:string }'
   },
@@ -226,7 +232,7 @@ config.local_type_replacements = {
     param_table_opts = '{ default?:string, scope?:string }'
   },
   ['editor.prefs.schema.tuple'] = {
-    param_table_opts = '{ items:editor.schema[], default?:any[], scope?:string }'
+    param_table_opts = '{ items:[editor.schema], default?:[any], scope?:string }'
   },
   ['editor.resource_attributes'] = {
     return_table_value = '{ exists:boolean, is_file:boolean, is_directory:boolean }'
@@ -239,16 +245,16 @@ config.local_type_replacements = {
     ['param_...any_...'] = 'any'
   },
   ['editor.ui.show_resource_dialog'] = {
-    ['return_string[_value'] = 'string[]|nil'
+    ['return_string[_value'] = '[string]|nil'
   },
   ['localization.and_list'] = {
-    ['param_any[_items'] = '(nil|boolean|number|string|editor.message)[]'
+    ['param_any[_items'] = '[nil|boolean|number|string|editor.message]'
   },
   ['localization.or_list'] = {
-    ['param_any[_items'] = '(nil|boolean|number|string|editor.message)[]'
+    ['param_any[_items'] = '[nil|boolean|number|string|editor.message]'
   },
   ['localization.concat'] = {
-    ['param_any[_items'] = '(nil|boolean|number|string|editor.message)[]'
+    ['param_any[_items'] = '[nil|boolean|number|string|editor.message]'
   },
   ['gui.clone_tree'] = {
     return_table_clones = 'table<hash, node>'
@@ -257,10 +263,14 @@ config.local_type_replacements = {
     return_table_clones = 'table<hash, node>'
   },
   ['gui.play_flipbook'] = {
-    param_table_play_properties = '{ offset?:number, playback_rate?:number }'
+    param_table_play_properties = '{ offset?:number, playback_rate?:number }',
+    param_function_complete_function = 'fun(self, node:node)'
   },
   ['gui.stop_particlefx'] = {
     param_table_options = '{ clear?:boolean }'
+  },
+  ['gui.play_particlefx'] = {
+    param_function_emitter_state_function = 'fun(self, node?:node, emitter:hash, state:particlefx.EMITTER_STATE|integer)'
   },
   ['gui.get_layouts'] = {
     ['return_table_'] = 'table<hash, vector3>'
@@ -287,16 +297,19 @@ config.local_type_replacements = {
     param_table_options = '{ clear?:boolean }'
   },
   ['sprite.play_flipbook'] = {
-    param_table_options = '{ offset?:number, playback_rate?:number }'
+    param_table_options = '{ offset?:number, playback_rate?:number }',
+    param_function_complete_function = 'fun(self, message_id:hash, message:{ current_tile:number, id:hash}, sender:url)'
   },
   ['sound.play'] = {
-    param_table_play_properties = '{ delay?:number, gain?:number, pan?:number, speed?:number, start_time?:number, start_frame?:number }'
+    param_table_play_properties = '{ delay?:number, gain?:number, pan?:number, speed?:number, start_time?:number, start_frame?:number }',
+    param_function_complete_function = 'fun(self, message_id:hash, message:{ play_id:number }, sender:url)'
   },
   ['sound.stop'] = {
     param_table_stop_properties = '{ play_id:number }'
   },
   ['model.play_anim'] = {
-    param_table_play_properties = '{ blend_duration?:number, offset?:number, playback_rate?:number}'
+    param_table_play_properties = '{ blend_duration?:number, offset?:number, playback_rate?:number }',
+    param_function_complete_function = 'fun(self, message_id:hash, message:{ animation_id:hash, playback:go.PLAYBACK|integer }, sender:url)'
   },
   ['image.get_astc_header'] = {
     return_table_table = '{ width:number, height:number, depth:number, block_size_x:number, block_size_y:number, block_size_z:number }'
@@ -312,7 +325,7 @@ config.local_type_replacements = {
   },
   ['physics.raycast'] = {
     param_table_options = '{ all?:boolean }',
-    return_table_result = 'physics.raycast_response[]|physics.raycast_response'
+    return_table_result = '[physics.raycast_response]|physics.raycast_response'
   },
   ['physics.get_shape'] = {
     return_table_table = '{ type?:number, diameter?:number, dimensions?:vector3, height?:number }'
@@ -330,26 +343,26 @@ config.local_type_replacements = {
     param_table_table = 'resource.atlas'
   },
   ['resource.get_render_target_info'] = {
-    return_table_table = '{ handle:number, attachments:{ handle:number, width:number, height:number, depth:number, mipmaps:number, type:number, buffer_type:number, texture:hash }[] }'
+    return_table_table = '{ handle:number, attachments:[{ handle:number, width:number, height:number, depth:number, mipmaps:number, type:graphics.TEXTURE_TYPE|integer, buffer_type:graphics.BUFFER_TYPE|integer, texture:hash }] }'
   },
   ['resource.create_sound_data'] = {
     param_table_options = '{ data?:string, filesize?:number, partial?:boolean }'
   },
   ['resource.create_texture'] = {
-    param_table_table = '{ type:number, width:number, height:number, depth:number, format:number, flags?:number, max_mipmaps?:number, compression_type?:number}'
+    param_table_table = '{ type:graphics.TEXTURE_TYPE|integer, width:number, height:number, depth:number, format:graphics.TEXTURE_FORMAT|integer, flags?:graphics.TEXTURE_USAGE_FLAG|integer, max_mipmaps?:number, compression_type?:graphics.COMPRESSION_TYPE|integer }'
   },
   ['resource.create_texture_async'] = {
-    param_table_table = '{ type:number, width:number, height:number, depth:number, format:number, flags?:number, max_mipmaps?:number, compression_type?:number}',
-    param_function_callback = 'fun(self, request_id, resource)'
+    param_table_table = '{ type:graphics.TEXTURE_TYPE|integer, width:number, height:number, depth:number, format:graphics.TEXTURE_FORMAT|integer, flags?:graphics.TEXTURE_USAGE_FLAG|integer, max_mipmaps?:number, compression_type?:graphics.COMPRESSION_TYPE|integer }',
+    param_function_callback = 'fun(self, request_id:number, resource:hash)'
   },
   ['resource.set_texture'] = {
-    param_table_table = '{ type:number, width:number, height:number, format:number, x?:number, y?:number, z?:number, mipmap?:number, compression_type?:number}'
+    param_table_table = '{ type:number, width:number, height:number, format:number, x?:number, y?:number, z?:number, mipmap?:number, compression_type?:number }'
   },
   ['resource.get_texture_info'] = {
     return_table_table = '{ handle:number, width:number, height:number, depth:number, mipmaps:number, flags:number, type:number }'
   },
   ['resource.get_text_metrics'] = {
-    param_table_options = '{ width?:number, leading?:number, tracking?:number, line_break?:boolean}',
+    param_table_options = '{ width?:number, leading?:number, tracking?:number, line_break?:boolean }',
     return_table_metrics = '{ width:number, height:number, max_ascent:number, max_descent:number }'
   },
   ['resource.create_buffer'] = {
@@ -365,19 +378,22 @@ config.local_type_replacements = {
     param_table_options = '{ frustum?:matrix4, frustum_planes?:number }'
   },
   ['render.predicate'] = {
-    param_table_tags = '(string|hash)[]'
+    param_table_tags = '[string|hash]'
   },
   ['render.render_target'] = {
-    param_table_parameters = 'table<number, { format:number, width:number, height:number, min_filter?:number, mag_filter?:number, u_wrap?:number, v_wrap?:number, flags?:number}>'
+    param_table_parameters = 'table<number, { format:number, width:number, height:number, min_filter?:number, mag_filter?:number, u_wrap?:number, v_wrap?:number, flags?:number }>'
   },
   ['render.set_camera'] = {
     param_table_options = '{ use_frustum?:boolean }'
   },
   ['render.set_render_target'] = {
-    param_table_options = '{ transient?:number[] }'
+    param_table_options = '{ transient?:[number] }'
+  },
+  ['render.set_listener'] = {
+    param_function_callback = 'fun(self, event_type:render.CONTEXT_EVENT|string)|nil'
   },
   ['sound.get_groups'] = {
-    return_table_groups = 'hash[]'
+    return_table_groups = '[hash]'
   },
   ['sys.get_sys_info'] = {
     param_table_options = '{ ignore_secure?:boolean }',
@@ -403,10 +419,49 @@ config.local_type_replacements = {
     param_number_z = 'number?'
   },
   ['vmath.vector'] = {
-    param_table_t = 'number[]'
+    param_table_t = '[number]'
   },
   ['zip.pack'] = {
     param_table_opts = '{ method?:string, level?:integer }'
+  },
+  ['camera.get_orthographic_mode'] = {
+    return_number_mode = 'camera.ORTHO_MODE|integer'
+  },
+  ['camera.set_orthographic_mode'] = {
+    param_number_mode = 'camera.ORTHO_MODE|integer'
+  },
+  ['collectionproxy.set_collection'] = {
+    return_number_code = 'collectionproxy.RESULT|integer'
+  },
+  ['window.get_safe_area'] = {
+    return_table_safe_area = '{ x:number, y:number, width:number, height:number, inset_left:number, inset_top:number, inset_right:number, inset_bottom:number }'
+  },
+  ['font.prewarm_text'] = {
+    param_function_callback = 'fun(self, request_id:number, result:boolean, errstring?:string)'
+  },
+  ['http.request'] = {
+    param_function_callback = 'fun(self, id:hash, response:table)'
+  },
+  ['physics.set_event_listener'] = {
+    param_function_callback = 'fun(self, events:[table])|nil'
+  },
+  ['collectionfactory.load'] = {
+    param_function_complete_function = 'fun(self, url:url, result:boolean)'
+  },
+  ['factory.load'] = {
+    param_function_complete_function = 'fun(self, url:url, result:boolean)'
+  },
+  ['go.animate'] = {
+    param_function_complete_function = 'fun(self, url:url, property:hash)'
+  },
+  ['gui.animate'] = {
+    param_function_complete_function = 'fun(self, node:node)'
+  },
+  ['sys.load_buffer_async'] = {
+    param_function_status_callback = 'fun(self, request_id:number, result: { status:sys.REQUEST_STATUS|integer, buffer:buffer_data|nil })'
+  },
+  ['timer.delay'] = {
+    param_function_callback = 'fun(self, handle:number, time_elapsed:number)'
   }
 }
 
@@ -560,8 +615,8 @@ config.known_classes = {
   },
   ['resource.atlas'] = {
     texture = 'string|hash The path to the texture resource, e.g "/main/my_texture.texturec"',
-    animations = 'resource.animation[] A list of the animations in the atlas',
-    geometries = 'resource.geometry[] A list of the geometries that should map to the texture data',
+    animations = '[resource.animation] A list of the animations in the atlas',
+    geometries = '[resource.geometry] A list of the geometries that should map to the texture data',
   },
   ['resource.animation'] = {
     id = 'string The id of the animation, used in e.g sprite.play_animation',
@@ -581,9 +636,9 @@ config.known_classes = {
     pivot_x = 'number The pivot x value of the image in unit coords. (0,0) is upper left corner, (1,1) is bottom right. Default is 0.5.',
     pivot_y = 'number The pivot y value of the image in unit coords. (0,0) is upper left corner, (1,1) is bottom right. Default is 0.5.',
     rotated = 'boolean Whether the image is rotated 90 degrees counter-clockwise in the atlas. This affects UV coordinate generation for proper rendering. Default is false.',
-    vertices = 'number[] A list of the vertices in texture space of the geometry in the form { px0, py0, px1, py1, ..., pxn, pyn }',
-    uvs = 'number[] A list of the uv coordinates in texture space of the geometry in the form of { u0, v0, u1, v1, ..., un, vn }',
-    indices = 'number[] A list of the indices of the geometry in the form { i0, i1, i2, ..., in }. Each tripe in the list represents a triangle.'
+    vertices = '[number] A list of the vertices in texture space of the geometry in the form { px0, py0, px1, py1, ..., pxn, pyn }',
+    uvs = '[number] A list of the uv coordinates in texture space of the geometry in the form of { u0, v0, u1, v1, ..., un, vn }',
+    indices = '[number] A list of the indices of the geometry in the form { i0, i1, i2, ..., in }. Each tripe in the list represents a triangle.'
   },
   ['physics.raycast_response'] = {
     fraction = 'number The fraction of the hit measured along the ray, where 0 is the start of the ray and 1 is the end',
@@ -607,7 +662,7 @@ config.known_classes = {
     ['screen_dx?'] = 'number The change in screen space x value of a pointer device, if present.',
     ['gamepad?'] = 'integer The change in screen space y value of a pointer device, if present.',
     ['screen_dy?'] = 'number The index of the gamepad device that provided the input.',
-    ['touch?'] = 'on_input.touch[] List of touch input, one element per finger, if present.',
+    ['touch?'] = '[on_input.touch] List of touch input, one element per finger, if present.',
     ['text?'] = 'string The text entered with the `text` action, if present'
   },
   ['on_input.touch'] = {
@@ -648,9 +703,8 @@ config.known_aliases = {
   buffer_stream = 'userdata',
   buffer_data = 'userdata',
 
-  b2BodyType = 'number',
-  b2World = 'userdata',
-  b2Body = 'userdata',
+  ['b2d.world'] = 'userdata',
+  ['b2d.body'] = 'userdata',
 
   socket_client = 'userdata',
   socket_master = 'userdata',
