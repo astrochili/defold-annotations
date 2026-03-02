@@ -331,7 +331,7 @@ config.local_type_replacements = {
     return_table_table = '{ type?:number, diameter?:number, dimensions?:vector3, height?:number }'
   },
   ['physics.set_shape'] = {
-    param_table_table = '{ diameter?:number, dimensions?:vector3, height?:number }'
+    param_table_table = '{ type?:number, diameter?:number, dimensions?:vector3, height?:number }'
   },
   ['resource.create_atlas'] = {
     param_table_table = 'resource.atlas'
@@ -356,10 +356,10 @@ config.local_type_replacements = {
     param_function_callback = 'fun(self, request_id:number, resource:hash)'
   },
   ['resource.set_texture'] = {
-    param_table_table = '{ type:number, width:number, height:number, format:number, x?:number, y?:number, z?:number, mipmap?:number, compression_type?:number }'
+    param_table_table = '{ type:graphics.TEXTURE_TYPE|integer, width:number, height:number, format:graphics.TEXTURE_FORMAT|integer, x?:number, y?:number, z?:number, mipmap?:number, compression_type?:graphics.COMPRESSION_TYPE|integer}'
   },
   ['resource.get_texture_info'] = {
-    return_table_table = '{ handle:number, width:number, height:number, depth:number, mipmaps:number, flags:number, type:number }'
+    return_table_table = '{ handle:number, width:number, height:number, depth:number, mipmaps:number, flags:number, type:graphics.TEXTURE_TYPE|integer }'
   },
   ['resource.get_text_metrics'] = {
     param_table_options = '{ width?:number, leading?:number, tracking?:number, line_break?:boolean }',
