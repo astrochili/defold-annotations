@@ -14,6 +14,7 @@
 
 ---@class info
 ---@field namespace string
+---@field language string
 ---@field brief string
 ---@field description? string
 

@@ -48,7 +48,7 @@ function parser.parse_json(json_paths)
   for _, json_path in ipairs(json_paths) do
     local module = parse_path(json_path)
 
-    if module then
+    if module and module.info.language == 'Lua' then
       table.insert(modules, module)
     end
   end
