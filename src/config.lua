@@ -161,6 +161,9 @@ config.local_type_replacements = {
   ['crash.get_modules'] = {
     return_table_modules = '[{ name:string, address:string }]'
   },
+  ['editor.properties'] = {
+    ['return_string[_properties'] = '[string]'
+  },
   ['editor.create_resources'] = {
     ['param_string[_resources'] = '[string]'
   },
