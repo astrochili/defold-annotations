@@ -11,6 +11,8 @@ local aliases = require 'rules.aliases'
 local classes = require 'rules.classes'
 local disabled_diagnostics = require 'rules.disabled_diagnostics'
 local generics = require 'rules.generics'
+local ignored_funcs = require 'rules.ignored_funcs'
+local known_types = require 'rules.known_types'
 local replacements = require 'rules.replacements'
 
 local config = {}
@@ -56,40 +58,11 @@ config.json_list_txt = config.temp_path('json_list.txt')
 ---Name of the output folder
 config.api_folder = config.temp_path('defold_api')
 
----Ignored functions
----Possible to use suffix `*`
-config.ignored_funcs = {
-  'init',
-  'update',
-  'fixed_update',
-  'on_input',
-  'on_message',
-  'on_reload',
-  'final',
-  'client:*',
-  'server:*',
-  'master:*',
-  'connected:*',
-  'unconnected:*'
-}
-
 ---Default type for unknown types
 config.unknown_type = 'unknown'
 
----Known types
-config.known_types = {
-  'nil',
-  'any',
-  'boolean',
-  'number',
-  'integer',
-  'string',
-  'userdata',
-  'function',
-  'thread',
-  'table'
-}
-
+config.known_types = known_types
+config.ignored_funcs = ignored_funcs
 config.global_type_replacements = replacements
 config.generics = generics
 config.known_classes = classes
