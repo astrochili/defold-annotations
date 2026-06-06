@@ -20,6 +20,11 @@ local active_enum_registry = {
   member_to_alias = {},
   aliases = {},
 }
+local active_generated_type_names = {}
+
+local function trim(s)
+  return (s or ''):gsub('^%s+', ''):gsub('%s+$', '')
+end
 
 --
 -- Local
@@ -129,6 +134,20 @@ local function make_comment(text, tab)
   end
 
   return result
+end
+
+---Extract the free-form text that appears before an html definition list.
+---@param text string
+---@return string
+local function extract_doc_summary(text)
+  local summary = text or ''
+  local dl_start = summary:find('<dl>', 1, true)
+
+  if dl_start then
+    summary = summary:sub(1, dl_start - 1)
+  end
+
+  return trim(decode_text(summary))
 end
 
 ---Make an annotatable module header
@@ -477,6 +496,8 @@ local function make_param_types(name, types, is_return, element, description)
       is_known = is_known or type == known_class
     end
 
+    is_known = is_known or active_generated_type_names[type] == true
+
     local known_aliases = utils.sorted_keys(config.known_aliases)
     for _, known_alias in ipairs(known_aliases) do
       is_known = is_known or type == known_alias
@@ -513,6 +534,134 @@ local function make_param_types(name, types, is_return, element, description)
   result = #result > 0 and result or config.unknown_type
 
   return result
+end
+
+---Parse html definition list entries like `<dt><code>id</code></dt><dd><span class="type">hash</span> ...</dd>`.
+---@param text string
+---@return table[] fields
+local function parse_doc_fields(text)
+  local fields = {}
+  local source = text or ''
+
+  for raw_name, raw_type, raw_description in source:gmatch('<dt><code>(.-)</code></dt>%s*<dd><span class="type">(.-)</span>%s*(.-)</dd>') do
+    table.insert(fields, {
+      name = trim(decode_text(raw_name)),
+      type = trim(decode_text(raw_type)),
+      description = trim(decode_text(raw_description)),
+      raw_description = raw_description,
+    })
+  end
+
+  return fields
+end
+
+---@param field_name string
+---@param type_name string
+---@param description string
+---@param element element
+---@param known_generated_names table<string, boolean>?
+---@return string
+local function make_class_field_type(field_name, type_name, description, element, known_generated_names)
+  local field_type = type_name
+
+  if not (known_generated_names and known_generated_names[type_name]) then
+    field_type = make_param_types(field_name, { type_name }, false, element, description)
+  end
+
+  local field_description = trim(description)
+
+  if field_description ~= '' then
+    return field_type .. ' ' .. field_description
+  end
+
+  return field_type
+end
+
+---Create synthetic classes for message payloads so they can be reused from callbacks and return values.
+---@param module module
+---@return element[]
+local function make_message_classes(module)
+  local classes = {}
+  local module_namespace = module.info.namespace
+
+  for _, message in ipairs(module.elements) do
+    if message.type == 'MESSAGE' and message.parameters and #message.parameters > 0 then
+      local class_name = 'message.' .. module_namespace .. '.' .. message.name
+      local fields = {}
+      local helper_classes = {}
+      local generated_type_names = {
+        [class_name] = true,
+      }
+
+      for _, parameter in ipairs(message.parameters) do
+        local raw_type = parameter.types and parameter.types[1]
+
+        if raw_type == 'table' and #parse_doc_fields(parameter.doc) > 0 then
+          local helper_field_name = parameter.name:gsub('%.', '_'):gsub('-', '_')
+          generated_type_names[class_name .. '.' .. helper_field_name] = true
+        end
+      end
+
+      for _, parameter in ipairs(message.parameters) do
+        local field_name = parameter.name
+        if field_name:sub(-3) == '...' then
+          field_name = '...'
+        end
+        field_name = field_name:gsub('-', '_')
+        local raw_type = parameter.types and parameter.types[1]
+        local nested_fields = raw_type == 'table' and parse_doc_fields(parameter.doc) or {}
+        local is_optional = parameter.is_optional == 'True'
+        local output_field_name = is_optional and (field_name .. '?') or field_name
+        local description = extract_doc_summary(parameter.doc)
+
+        if #nested_fields > 0 then
+          local helper_class_name = class_name .. '.' .. field_name
+          local helper_class_fields = {}
+
+          for _, nested_field in ipairs(nested_fields) do
+            helper_class_fields[nested_field.name] = make_class_field_type(
+              nested_field.name,
+              nested_field.type,
+              nested_field.description,
+              message,
+              generated_type_names
+            )
+          end
+
+          table.insert(helper_classes, {
+            type = 'CLASS',
+            name = helper_class_name,
+            description = description,
+            fields = helper_class_fields,
+          })
+
+          fields[output_field_name] = make_class_field_type(field_name, helper_class_name, description, message, generated_type_names)
+        else
+          fields[output_field_name] = make_class_field_type(
+            field_name,
+            table.concat(parameter.types or { config.unknown_type }, '|'),
+            description,
+            message,
+            generated_type_names
+          )
+        end
+      end
+
+      table.insert(classes, {
+        type = 'CLASS',
+        name = class_name,
+        brief = message.brief,
+        description = message.description,
+        fields = fields,
+      })
+
+      for _, helper_class in ipairs(helper_classes) do
+        table.insert(classes, helper_class)
+      end
+    end
+  end
+
+  return classes
 end
 
 ---Make an annotatable param description
@@ -628,13 +777,28 @@ local function make_class(element)
   assert(fields)
 
   local result = ''
+  local description = element.description or element.brief
+
+  if description and description ~= '' then
+    result = result .. make_comment(description) .. '\n'
+  end
+
   result = result .. '---@class ' .. name .. '\n'
 
   local field_names = utils.sorted_keys(fields)
   for index, field_name in ipairs(field_names) do
-    local type = fields[field_name]
+    local field = fields[field_name]
+    local field_type = field
 
-    result = result .. '---@field ' .. field_name .. ' ' .. type
+    if type(field) == 'table' then
+      field_type = field.type
+
+      if field.description and field.description ~= '' then
+        field_type = field_type .. ' ' .. field.description
+      end
+    end
+
+    result = result .. '---@field ' .. field_name .. ' ' .. field_type
 
     if index < #field_names then
       result = result .. '\n'
@@ -691,6 +855,11 @@ local function make_namespace_elements(module, root_namespaces)
   local namespace_names = {}
   local root_namespace = module.info.namespace
   local has_root_namespace_content = false
+  local declared_names = {}
+
+  for _, element in ipairs(module.elements) do
+    declared_names[element.name] = true
+  end
 
   for _, element in ipairs(module.elements) do
     local prefixes = get_namespace_prefixes(element.name)
@@ -700,7 +869,9 @@ local function make_namespace_elements(module, root_namespaces)
         has_root_namespace_content = true
       end
 
-      if prefix ~= root_namespace then
+      local is_message_namespace = prefix == 'message' or prefix:match('^message%.') ~= nil
+
+      if not is_message_namespace and prefix ~= root_namespace and not declared_names[prefix] then
         local root_prefix = prefix:match('^[^%.]+')
         if not (prefix == root_prefix and root_namespaces[root_prefix]) then
           namespace_names[prefix] = true
@@ -741,9 +912,31 @@ end
 ---@param root_namespaces table<string, boolean>
 ---@param defold_version string like '1.0.0'
 local function generate_api(module, root_namespaces, defold_version)
+  local elements = {}
+
   for _, element in ipairs(module.elements) do
+    table.insert(elements, element)
+  end
+
+  for _, element in ipairs(make_message_classes(module)) do
+    table.insert(elements, element)
+  end
+
+  for _, element in ipairs(elements) do
     element._module_namespace = module.info.namespace
   end
+
+  active_generated_type_names = {}
+  for _, element in ipairs(elements) do
+    if element.type == 'CLASS' or element.type == 'ALIAS' or element.type == 'BASIC_CLASS' or element.type == 'BASIC_ALIAS' then
+      active_generated_type_names[element.name] = true
+    end
+  end
+
+  module = {
+    info = module.info,
+    elements = elements,
+  }
 
   local content = make_header(defold_version, module.info.brief, module.info.description)
   content = content .. '\n\n'
@@ -771,9 +964,15 @@ local function generate_api(module, root_namespaces, defold_version)
   table.sort(elements, function(a, b)
     local a_is_alias = a.type == 'ALIAS' or a.type == 'BASIC_ALIAS'
     local b_is_alias = b.type == 'ALIAS' or b.type == 'BASIC_ALIAS'
+    local a_is_class = a.type == 'CLASS' or a.type == 'BASIC_CLASS'
+    local b_is_class = b.type == 'CLASS' or b.type == 'BASIC_CLASS'
 
     if a_is_alias ~= b_is_alias then
       return a_is_alias
+    end
+
+    if a_is_class ~= b_is_class then
+      return a_is_class
     end
 
     if a.name ~= b.name then
@@ -871,7 +1070,6 @@ function generator.generate_api(modules, defold_version, enum_registry)
   terminal.create_folder(config.api_folder)
 
   local merged_modules = {}
-
   for _, module in ipairs(modules) do
     local namespace = module.info.namespace
 

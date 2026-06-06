@@ -96,14 +96,6 @@ return {
     uvs = '[number] A list of the uv coordinates in texture space of the geometry in the form of { u0, v0, u1, v1, ..., un, vn }',
     indices = '[number] A list of the indices of the geometry in the form { i0, i1, i2, ..., in }. Each tripe in the list represents a triangle.'
   },
-  ['physics.raycast_response'] = {
-    fraction = 'number The fraction of the hit measured along the ray, where 0 is the start of the ray and 1 is the end',
-    position = 'vector3 The world position of the hit',
-    normal = 'vector3 The normal of the surface of the collision object where it was hit',
-    id = 'hash The instance id of the hit collision object',
-    group = 'hash The collision group of the hit collision object as a hashed name',
-    request_id = 'number The id supplied when the ray cast was requested'
-  },
   ['on_input.action'] = {
     ['value?'] = 'number The amount of input given by the user. This is usually 1 for buttons and 0-1 for analogue inputs. This is not present for mouse movement.',
     ['pressed?'] = 'boolean If the input was pressed this frame. This is not present for mouse movement.',

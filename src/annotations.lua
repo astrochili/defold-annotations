@@ -27,6 +27,7 @@
 ---@field alias? string
 ---@field fields? table
 ---@field operators? table
+---@field brief? string
 
 ---@class parameter
 ---@field name string
