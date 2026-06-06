@@ -8,13 +8,18 @@
 
 local html_entities = require 'libs.html_entities'
 local config = require 'src.config'
+local diagnostics = require 'src.diagnostics'
 local utils = require 'src.utils'
 local terminal = require 'src.terminal'
 
 local generator = {}
 
 local namespace_constants = {}
-local namespace_aliases = {}
+local active_enum_registry = {
+  alias_names = {},
+  member_to_alias = {},
+  aliases = {},
+}
 
 --
 -- Local
@@ -39,6 +44,40 @@ local function apply_inline_rules(s, inline_rules)
   end
 
   return s
+end
+
+---Build a merge key for elements that should dedupe across doc sources.
+---Elements are considered duplicates if type, name, parameter types, and optional flags match.
+---@param element table
+---@return string?
+local function make_merge_key(element)
+  if type(element) ~= "table" or not element.type or not element.name then
+    return nil
+  end
+
+  local parts = { element.type, element.name }
+  local parameters = element.parameters or {}
+
+  for _, parameter in ipairs(parameters) do
+    local types = parameter.types or {}
+    table.insert(parts, table.concat(types, "|"))
+    table.insert(parts, tostring(parameter.is_optional))
+  end
+
+  return table.concat(parts, "\0")
+end
+
+---@param elements table[]
+---@param merge_key string
+---@return integer?
+local function find_element_index_by_merge_key(elements, merge_key)
+  for index, element in ipairs(elements) do
+    if make_merge_key(element) == merge_key then
+      return index
+    end
+  end
+
+  return nil
 end
 
 ---Decode text to get rid of unnecessary html tags and entities
@@ -145,15 +184,25 @@ local function make_constant_fields(namespace)
   end
 
   local parts = {}
+  local ordered_names = {}
 
   for _, short_name in ipairs(constants.order) do
+    table.insert(ordered_names, short_name)
+  end
+
+  table.sort(ordered_names)
+
+  for _, short_name in ipairs(ordered_names) do
     local element = constants.items[short_name]
 
     if element.description and element.description ~= '' then
       table.insert(parts, make_comment(element.description))
     end
 
-    local type_hint = element.constant_type or 'integer'
+    local full_name = namespace .. '.' .. short_name
+    local enum_alias = active_enum_registry.member_to_alias[full_name]
+    local enum_info = enum_alias and active_enum_registry.aliases[enum_alias]
+    local type_hint = (enum_info and enum_info.value_type) or element.constant_type or 'integer'
     table.insert(parts, '---@field ' .. short_name .. ' ' .. type_hint)
   end
 
@@ -161,18 +210,16 @@ local function make_constant_fields(namespace)
   return #text > 0 and (text .. '\n') or ''
 end
 
----Wrap the class body to an annotatable namespace
+---Make an annotatable namespace declaration.
 ---@param name string
----@param body string
 ---@return string
-local function make_namespace(name, body)
+local function make_namespace(element)
+  local name = element.name
   local result = ''
 
   result = result .. '---@class defold_api.' .. name .. '\n'
   result = result .. make_constant_fields(name)
-  result = result .. name .. ' = {}\n\n'
-  result = result .. body .. '\n\n'
-  result = result .. 'return ' .. name
+  result = result .. name .. ' = {}'
 
   return result
 end
@@ -198,10 +245,10 @@ local function extract_namespace(name)
   if not last_dot then
     return nil, nil
   end
-  
+
   local namespace = name:sub(1, last_dot - 1)
   local constant_name = name:sub(last_dot + 1)
-  
+
   return namespace, constant_name
 end
 
@@ -242,78 +289,16 @@ local function set_constant_type(full_name, type_name)
   local element = constants.items[short_name]
 
   if element then
+    if element.constant_type == 'string' or element.constant_type == 'hash' then
+      return
+    end
+
+    if type_name == 'integer' and element.constant_type ~= nil and element.constant_type ~= 'integer' then
+      return
+    end
+
     element.constant_type = type_name
   end
-end
-
----Return true if an alias was already registered for the given type
----@param type string
----@return boolean
-local function alias_is_registered(type)
-  local namespace, alias_name = extract_namespace(type)
-
-  if not namespace or not alias_name then
-    return false
-  end
-
-  local aliases = namespace_aliases[namespace]
-  return aliases and aliases[alias_name] ~= nil
-end
-
----Register an alias for a namespace along with the constants it references
----@param namespace string
----@param alias_name string
----@param full_names string[]
-local function register_alias(namespace, alias_name, full_names)
-  namespace_aliases[namespace] = namespace_aliases[namespace] or {}
-  local aliases = namespace_aliases[namespace]
-  aliases[alias_name] = aliases[alias_name] or { order = {}, items = {} }
-  local alias = aliases[alias_name]
-
-  for _, full_name in ipairs(full_names) do
-    if not alias.items[full_name] then
-      alias.items[full_name] = true
-      table.insert(alias.order, full_name)
-    end
-  end
-end
-
----Render `---@alias` blocks for a namespace
----@param namespace string
----@return string
-local function make_alias_lines(namespace)
-  local aliases = namespace_aliases[namespace]
-
-  if not aliases then
-    return ''
-  end
-
-  local alias_names = utils.sorted_keys(aliases)
-  local parts = {}
-
-  for index, alias_name in ipairs(alias_names) do
-    local alias = aliases[alias_name]
-    table.insert(parts, '---@alias ' .. namespace .. '.' .. alias_name)
-
-    local constants = {}
-
-    for _, full_name in ipairs(alias.order) do
-      table.insert(constants, full_name)
-    end
-
-    table.sort(constants)
-
-    for _, full_name in ipairs(constants) do
-      table.insert(parts, '---| `' .. full_name .. '`')
-    end
-
-    if index < #alias_names then
-      table.insert(parts, '')
-    end
-  end
-
-  local text = table.concat(parts, '\n')
-  return #text > 0 and text or ''
 end
 
 ---Make an annotatable variable
@@ -335,10 +320,6 @@ end
 ---@return string name
 local function make_param_name(parameter, is_return, element)
   local name = parameter.name
-  name = config.global_name_replacements[name] or name
-
-  local local_replacements = config.local_name_replacements[element.name] or {}
-  name = local_replacements[(is_return and 'return_' or 'param_') .. name] or name
 
   if name:sub(-3) == '...' then
     name = '...'
@@ -357,11 +338,33 @@ end
 ---@param description string?
 ---@return string concated_string
 local function make_param_types(name, types, is_return, element, description)
-  local local_replacements = config.local_type_replacements[element.name] or {}
   local original_types = {}
-  local includes_constant_placeholder = false
   local fallback_is_string = false
   local fallback_is_hash = false
+
+  local function make_type_context(subject_type, subject_name, unresolved_type)
+    local module_name = element._module_namespace or '<unknown module>'
+    local source_path = element._source_path and (' from "' .. element._source_path .. '"') or ''
+    local target_name = element.name or '<unknown element>'
+
+    return subject_type
+      .. ' "' .. subject_name .. '" in "' .. target_name .. '"'
+      .. ' (module "' .. module_name .. '")'
+      .. source_path
+      .. ' uses type "' .. unresolved_type .. '"'
+  end
+
+  ---Return true if a type string already looks like an annotation type expression.
+  ---@param type string
+  ---@return boolean
+  local function is_annotation_type_expression(type)
+    return type:sub(1, 9) == 'function('
+      or type:sub(1, 1) == '{'
+      or type:sub(1, 1) == '['
+      or type:sub(1, 4) == 'fun('
+      or type:find('[|<>%,%?]') ~= nil
+      or type:find('%s') ~= nil
+  end
 
   for index, type in ipairs(types) do
     if type:sub(1, 5) == 'type:' then
@@ -371,16 +374,14 @@ local function make_param_types(name, types, is_return, element, description)
 
     original_types[index] = type
 
-    if type == 'constant' then
-      includes_constant_placeholder = true
-    elseif type == 'string' then
+    if type == 'string' then
       fallback_is_string = true
     elseif type == 'hash' then
       fallback_is_hash = true
     end
   end
 
-  ---Lookup a registered constant for a namespace
+  ---Lookup a registered constant for a namespace.
   ---@param namespace string?
   ---@param short_name string?
   ---@return element?
@@ -389,181 +390,64 @@ local function make_param_types(name, types, is_return, element, description)
     return constants and constants.items[short_name]
   end
 
-  ---Compute the common underscore-separated prefix for a batch of constant names
-  ---@param short_names string[]
+  ---Return the primitive type for a known constant reference.
+  ---@param full_name string
   ---@return string?
-  local function get_common_prefix(short_names)
-    if #short_names == 0 then
-      return nil
-    end
+  local function get_constant_reference_type(full_name)
+    local namespace, short_name = extract_namespace(full_name)
 
-    local prefix_tokens
-
-    for _, short_name in ipairs(short_names) do
-      local tokens = {}
-
-      for token in short_name:gmatch('[^_]+') do
-        table.insert(tokens, token)
+    if namespace and short_name then
+      local constant = get_constant(namespace, short_name)
+      if constant then
+        return constant.constant_type or 'integer'
       end
-
-      if not prefix_tokens then
-        prefix_tokens = tokens
-      else
-        local new_prefix = {}
-
-        for index = 1, math.min(#prefix_tokens, #tokens) do
-          if prefix_tokens[index] == tokens[index] then
-            table.insert(new_prefix, prefix_tokens[index])
-          else
-            break
-          end
-        end
-
-        prefix_tokens = new_prefix
-      end
-
-      if not prefix_tokens or #prefix_tokens == 0 then
-        break
-      end
-    end
-
-    if prefix_tokens and #prefix_tokens > 0 then
-      return table.concat(prefix_tokens, '_')
     end
 
     return nil
   end
 
-  local constant_map = {}
-
-  ---Register that a constant was referenced by a parameter/return description
-  ---@param full_name string
-  ---@return boolean
-  local function add_constant_usage(full_name)
-    local namespace, short_name = extract_namespace(full_name)
-
-    if namespace and short_name and get_constant(namespace, short_name) then
-      constant_map[namespace] = constant_map[namespace] or { shorts = {}, short_lookup = {}, fulls = {} }
-      local entry = constant_map[namespace]
-
-      if not entry.short_lookup[short_name] then
-        table.insert(entry.shorts, short_name)
-        entry.short_lookup[short_name] = true
-      end
-
-      entry.fulls[full_name] = short_name
-      return true
-    end
-
-    return false
+  ---Return the annotation type for an enum alias, including its primitive fallback.
+  ---@param alias_name string
+  ---@return string
+  local function get_enum_annotation_type(alias_name)
+    return alias_name
   end
 
-  for _, type in ipairs(original_types) do
-    local namespace, short_name = extract_namespace(type)
+  local fallback_type = 'integer'
 
-    if type ~= 'constant' and namespace and short_name then
-      add_constant_usage(type)
-    end
+  if fallback_is_string then
+    fallback_type = 'string'
+  elseif fallback_is_hash then
+    fallback_type = 'hash'
   end
 
-  if includes_constant_placeholder and description then
-    for namespace, raw_short_name in description:gmatch('([%w_]+)%.([%w_%*]+)') do
-      if raw_short_name:find('%*') then
-        local prefix = raw_short_name:gsub('%*', '')
-        local constants = namespace_constants[namespace]
-
-        if constants then
-          for short_name in pairs(constants.items) do
-            if short_name:sub(1, #prefix) == prefix then
-              add_constant_usage(namespace .. '.' .. short_name)
-            end
-          end
-        end
-      else
-        add_constant_usage(namespace .. '.' .. raw_short_name)
-      end
-    end
-  end
-
-  local constant_aliases = {}
-  local has_constant = false
-  local pending_aliases = {}
-  local pending_alias_order = {}
-  local constants_to_mark = {}
-  local constants_to_mark_lookup = {}
-
-  for namespace, data in pairs(constant_map) do
-    local alias_name = get_common_prefix(data.shorts)
-
-    if alias_name and #data.shorts >= 2 then
-      local alias_full_name = namespace .. '.' .. alias_name
-      if not pending_aliases[alias_full_name] then
-        pending_aliases[alias_full_name] = true
-        table.insert(pending_alias_order, alias_full_name)
-      end
-      local full_names = {}
-
-      for full_name in pairs(data.fulls) do
-        table.insert(full_names, full_name)
-        constant_aliases[full_name] = alias_full_name
-
-        if not constants_to_mark_lookup[full_name] then
-          table.insert(constants_to_mark, full_name)
-          constants_to_mark_lookup[full_name] = true
-        end
-      end
-
-      register_alias(namespace, alias_name, full_names)
-      has_constant = true
-    end
-  end
-
-  local processed_types = {}
-  local alias_added = {}
-
-  for _, type in ipairs(original_types) do
+  for index, type in ipairs(original_types) do
     if type == 'constant' then
-      if not has_constant then
-        table.insert(processed_types, type)
-      end
+      types[index] = fallback_type
+    elseif active_enum_registry.alias_names[type] then
+      types[index] = get_enum_annotation_type(type)
     else
-      local alias_name = constant_aliases[type]
-
-      if alias_name then
-        if not alias_added[alias_name] then
-          table.insert(processed_types, alias_name)
-          alias_added[alias_name] = true
-        end
+      local enum_alias = active_enum_registry.member_to_alias[type]
+      if enum_alias then
+        types[index] = get_enum_annotation_type(enum_alias)
       else
-        table.insert(processed_types, type)
+        local constant_reference_type = get_constant_reference_type(type)
+        if constant_reference_type then
+          diagnostics.report_error(
+            'missing-enum-alias',
+            'Constant type reference "' .. type .. '" is not mapped to an enum alias',
+            {
+              context = make_type_context(is_return and 'Return value' or 'Parameter', name, type),
+              hint = 'Add an enum rule to rules/enums.lua, or add an explicit type replacement if this should stay primitive.',
+            }
+          )
+          types[index] = constant_reference_type
+        else
+          types[index] = type
+        end
       end
     end
   end
-
-  for _, alias_name in ipairs(pending_alias_order) do
-    if not alias_added[alias_name] then
-      table.insert(processed_types, alias_name)
-      alias_added[alias_name] = true
-    end
-  end
-
-  if has_constant then
-    local fallback_type = 'integer'
-
-    if fallback_is_string then
-      fallback_type = 'string'
-    elseif fallback_is_hash then
-      fallback_type = 'hash'
-    end
-
-    table.insert(processed_types, fallback_type)
-
-    for _, full_name in ipairs(constants_to_mark) do
-      set_constant_type(full_name, fallback_type)
-    end
-  end
-
-  types = processed_types
 
   for index = 1, #types do
     local type = types[index]
@@ -579,8 +463,6 @@ local function make_param_types(name, types, is_return, element, description)
       end
     end
 
-    replacement = local_replacements[(is_return and 'return_' or 'param_') .. type .. '_' .. name] or replacement
-
     if replacement then
       type = replacement
       is_known = true
@@ -595,25 +477,27 @@ local function make_param_types(name, types, is_return, element, description)
       is_known = is_known or type == known_class
     end
 
-    if not is_known and alias_is_registered(type) then
-      is_known = true
-    end
-
     local known_aliases = utils.sorted_keys(config.known_aliases)
     for _, known_alias in ipairs(known_aliases) do
       is_known = is_known or type == known_alias
     end
 
-    is_known = is_known or type:sub(1, 9) == 'function('
+    is_known = is_known or active_enum_registry.alias_names[type] == true
+
+    if not is_known and is_annotation_type_expression(type) then
+      is_known = true
+    end
 
     if not is_known then
       types[index] = config.unknown_type
-
-      if os.getenv('LOCAL_LUA_DEBUGGER_VSCODE') == '1' then
-        assert(nil, 'Unknown type `' .. type .. '`')
-      else
-        print('!!! WARNING: Unknown type `' .. type .. '` has been replaced with `' .. config.unknown_type .. '`')
-      end
+      diagnostics.report_error(
+        'unknown-type',
+        'Unknown type "' .. type .. '" was replaced with "' .. config.unknown_type .. '"',
+        {
+          context = make_type_context(is_return and 'Return value' or 'Parameter', name, type),
+          hint = 'Add an entry to rules/replacements.lua, rules/aliases.lua, rules/classes.lua, or rules/enums.lua.',
+        }
+      )
     else
       type = type:gsub('function%(%)', 'function')
 
@@ -728,6 +612,10 @@ end
 ---@param element element
 ---@return string
 local function make_alias(element)
+  if element.alias:sub(1, 1) == '\n' then
+    return '---@alias ' .. element.name .. element.alias
+  end
+
   return '---@alias ' .. element.name .. ' ' .. element.alias
 end
 
@@ -741,11 +629,6 @@ local function make_class(element)
 
   local result = ''
   result = result .. '---@class ' .. name .. '\n'
-
-  if fields.is_global == true then
-    fields.is_global = nil
-    result = result .. name .. ' = {}'
-  end
 
   local field_names = utils.sorted_keys(fields)
   for index, field_name in ipairs(field_names) do
@@ -783,92 +666,178 @@ local function make_class(element)
   return result
 end
 
+---Return all namespace prefixes for a full public name.
+---@param name string
+---@return string[]
+local function get_namespace_prefixes(name)
+  local prefixes = {}
+  local current = ''
+
+  for segment in name:gmatch('[^%.]+') do
+    current = current == '' and segment or (current .. '.' .. segment)
+    table.insert(prefixes, current)
+  end
+
+  table.remove(prefixes)
+
+  return prefixes
+end
+
+---Create namespace elements inferred from public names in a module.
+---@param module module
+---@param root_namespaces table<string, boolean>
+---@return element[]
+local function make_namespace_elements(module, root_namespaces)
+  local namespace_names = {}
+  local root_namespace = module.info.namespace
+  local has_root_namespace_content = false
+
+  for _, element in ipairs(module.elements) do
+    local prefixes = get_namespace_prefixes(element.name)
+
+    for _, prefix in ipairs(prefixes) do
+      if prefix == root_namespace then
+        has_root_namespace_content = true
+      end
+
+      if prefix ~= root_namespace then
+        local root_prefix = prefix:match('^[^%.]+')
+        if not (prefix == root_prefix and root_namespaces[root_prefix]) then
+          namespace_names[prefix] = true
+        end
+      end
+    end
+  end
+
+  if root_namespace ~= '' and has_root_namespace_content then
+    namespace_names[root_namespace] = true
+  end
+
+  local names = utils.sorted_keys(namespace_names)
+  table.sort(names, function(a, b)
+    local a_depth = select(2, a:gsub('%.', ''))
+    local b_depth = select(2, b:gsub('%.', ''))
+
+    if a_depth == b_depth then
+      return a < b
+    end
+
+    return a_depth < b_depth
+  end)
+
+  local namespace_elements = {}
+  for _, name in ipairs(names) do
+    table.insert(namespace_elements, {
+      type = 'NAMESPACE',
+      name = name,
+    })
+  end
+
+  return namespace_elements
+end
+
 ---Generate API module with creating a .lua file
 ---@param module module
+---@param root_namespaces table<string, boolean>
 ---@param defold_version string like '1.0.0'
-local function generate_api(module, defold_version)
+local function generate_api(module, root_namespaces, defold_version)
+  for _, element in ipairs(module.elements) do
+    element._module_namespace = module.info.namespace
+  end
+
   local content = make_header(defold_version, module.info.brief, module.info.description)
   content = content .. '\n\n'
 
   local makers = {
+    NAMESPACE = make_namespace,
     FUNCTION = make_func,
     VARIABLE = make_var,
     CONSTANT = make_const,
+    CLASS = make_class,
+    ALIAS = make_alias,
     BASIC_CLASS = make_class,
-    BASIC_ALIAS = make_alias
+    BASIC_ALIAS = make_alias,
   }
 
+  local namespace_elements = make_namespace_elements(module, root_namespaces)
   local elements = {}
-  local namespace_is_required = false
 
   for _, element in ipairs(module.elements) do
     if makers[element.type] ~= nil then
       table.insert(elements, element)
     end
-
-    if not namespace_is_required then
-      local element_has_namespace = element.name:sub(1, #module.info.namespace) == module.info.namespace
-      namespace_is_required = element_has_namespace
-    end
   end
 
-  if #elements == 0 then
+  table.sort(elements, function(a, b)
+    local a_is_alias = a.type == 'ALIAS' or a.type == 'BASIC_ALIAS'
+    local b_is_alias = b.type == 'ALIAS' or b.type == 'BASIC_ALIAS'
+
+    if a_is_alias ~= b_is_alias then
+      return a_is_alias
+    end
+
+    if a.name ~= b.name then
+      return a.name < b.name
+    end
+
+    return a.type < b.type
+  end)
+
+  if #namespace_elements == 0 and #elements == 0 then
     print('[-] The module "' .. module.info.namespace .. '" is skipped because there are no known elements')
     return
   end
 
-  table.sort(elements, function(a, b)
-    if a.type == b.type then
-      return a.name < b.name
-    else
-      return a.type > b.type
-    end
-  end)
+  local namespace_body = ''
+  local regular_body = ''
 
-  local body = ''
+  for index, element in ipairs(namespace_elements) do
+    local maker = makers[element.type]
+    local text = maker(element)
+
+    if text then
+      namespace_body = namespace_body .. text
+
+      if index < #namespace_elements then
+        namespace_body = namespace_body .. '\n\n'
+      end
+    end
+  end
 
   for index, element in ipairs(elements) do
     local maker = makers[element.type]
     local text = maker(element)
 
     if text then
-      body = body .. text
+      regular_body = regular_body .. text
 
       if index < #elements then
         local newline = element.type == 'BASIC_ALIAS' and '\n' or '\n\n'
-        body = body .. newline
+        regular_body = regular_body .. newline
       end
     end
   end
 
-  local aliases = make_alias_lines(module.info.namespace)
+  local body = ''
 
-  if #aliases > 0 then
-    if #body > 0 then
-      body = aliases .. '\n\n' .. body
-    else
-      body = aliases
-    end
+  if #namespace_body > 0 and #regular_body > 0 then
+    body = namespace_body .. '\n\n' .. regular_body
+  else
+    body = namespace_body .. regular_body
   end
 
   body = body:gsub('%s+$', '')
 
   content = content .. make_disabled_diagnostics(config.disabled_diagnostics) .. '\n\n'
+  content = content .. body
 
-  if namespace_is_required then
-    content = content .. make_namespace(module.info.namespace, body)
-  else
-    content = content .. body
-  end
-
-  local api_path = config.api_folder .. config.folder_separator .. module.info.namespace .. '.lua'
+  local api_path = utils.path(config.api_folder, module.info.namespace .. '.lua')
   utils.save_file(content, api_path)
 end
 
----Reset cached constant and alias tables
+---Reset cached constant tables
 local function reset_namespace_data()
   namespace_constants = {}
-  namespace_aliases = {}
 end
 
 ---Scan all modules for constants so namespace fields can be emitted before generation
@@ -884,98 +853,21 @@ local function collect_constants(modules)
   end
 end
 
----Pre-generate aliases for constant groups with common prefixes
-local function generate_constant_aliases()
-  for namespace, constants in pairs(namespace_constants) do
-    -- Collect all possible prefixes and their matching constants
-    local prefix_to_constants = {}
-    
-    for _, short_name in ipairs(constants.order) do
-      local tokens = {}
-      for token in short_name:gmatch('[^_]+') do
-        table.insert(tokens, token)
-      end
-      
-      -- Generate all possible prefixes (1 to n-1 tokens)
-      for len = 1, #tokens - 1 do
-        local prefix_tokens = {}
-        for i = 1, len do
-          prefix_tokens[i] = tokens[i]
-        end
-        local prefix = table.concat(prefix_tokens, '_')
-        
-        -- Check if constant actually starts with this prefix followed by underscore
-        if short_name:sub(1, #prefix + 1) == prefix .. '_' then
-          if not prefix_to_constants[prefix] then
-            prefix_to_constants[prefix] = {}
-          end
-          
-          -- Add if not already present
-          local found = false
-          for _, existing in ipairs(prefix_to_constants[prefix]) do
-            if existing == short_name then
-              found = true
-              break
-            end
-          end
-          
-          if not found then
-            table.insert(prefix_to_constants[prefix], short_name)
-          end
-        end
-      end
-    end
-    
-    -- Sort prefixes by token count (prefer shorter = more general)
-    local sorted_prefixes = {}
-    for prefix, matching_constants in pairs(prefix_to_constants) do
-      if #matching_constants >= 2 then
-        table.insert(sorted_prefixes, {
-          prefix = prefix,
-          constants = matching_constants,
-          token_count = select(2, prefix:gsub('_', '')) + 1
-        })
-      end
-    end
-    
-    table.sort(sorted_prefixes, function(a, b)
-      return a.token_count > b.token_count  -- Prefer longer (more specific) prefixes
-    end)
-    
-    -- Register aliases, marking constants as used
-    local used_constants = {}
-    for _, entry in ipairs(sorted_prefixes) do
-      local available = {}
-      for _, short_name in ipairs(entry.constants) do
-        if not used_constants[short_name] then
-          table.insert(available, short_name)
-        end
-      end
-      
-      if #available >= 2 then
-        local full_names = {}
-        for _, short_name in ipairs(available) do
-          table.insert(full_names, namespace .. '.' .. short_name)
-          used_constants[short_name] = true
-        end
-        
-        register_alias(namespace, entry.prefix, full_names)
-      end
-    end
-  end
-end
-
 --
 -- Public
 
 ---Generate API modules with creating .lua files
 ---@param modules module[]
 ---@param defold_version string like '1.0.0'
-function generator.generate_api(modules, defold_version)
+function generator.generate_api(modules, defold_version, enum_registry)
   print('-- Annotations Generation')
 
   reset_namespace_data()
-  terminal.delete_folder(config.api_folder)
+  active_enum_registry = enum_registry or {
+    alias_names = {},
+    member_to_alias = {},
+    aliases = {},
+  }
   terminal.create_folder(config.api_folder)
 
   local merged_modules = {}
@@ -993,7 +885,14 @@ function generator.generate_api(modules, defold_version)
 
     if merged_module then
       for _, element in ipairs(module.elements) do
-        table.insert(merged_module.elements, element)
+        local key = make_merge_key(element)
+        local existing_index = key and find_element_index_by_merge_key(merged_module.elements, key) or nil
+
+        if existing_index then
+          merged_module.elements[existing_index] = element
+        else
+          table.insert(merged_module.elements, element)
+        end
       end
 
       if module.info.description ~= module.info.brief then
@@ -1005,10 +904,15 @@ function generator.generate_api(modules, defold_version)
   end
 
   collect_constants(merged_modules)
-  generate_constant_aliases()
 
-  for _, module in pairs(merged_modules) do
-    generate_api(module, defold_version)
+  local root_namespaces = {}
+  for namespace in pairs(merged_modules) do
+    root_namespaces[namespace] = true
+  end
+
+  local namespaces = utils.sorted_keys(merged_modules)
+  for index = #namespaces, 1, -1 do
+    generate_api(merged_modules[namespaces[index]], root_namespaces, defold_version)
   end
 
   print('-- Annotations Generated Successfully!\n')

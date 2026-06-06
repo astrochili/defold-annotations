@@ -11,6 +11,45 @@ local utils = {}
 --
 -- Public
 
+---Concat folders and files with system path separator
+---@param ... string
+function utils.path(...)
+  local paths = {}
+  local count = select('#', ...)
+
+  for index = 1, count do
+    paths[index] = select(index, ...)
+  end
+
+  local folder_separator = package.config:sub(1, 1)
+  return table.concat(paths, folder_separator)
+end
+
+---Check if the file or folder exists
+---@param path string path to the file or folder
+---@return boolean exists
+function utils.exists(path)
+  local file = io.open(path, 'r')
+
+  if file ~= nil then
+    file:close()
+    return true
+  end
+
+  return os.rename(path, path) ~= nil
+end
+
+---Rename or move a file or folder
+---@param from string source path
+---@param to string destination path
+---@return boolean result
+function utils.rename(from, to)
+  local result, error_message = os.rename(from, to)
+  assert(result, 'Can\'t rename or move "' .. from .. '" to "' .. to .. '": ' .. tostring(error_message))
+
+  return result
+end
+
 ---Save the content to the file
 ---@param content string content of the file
 ---@param path string path to the file

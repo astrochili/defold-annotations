@@ -7,32 +7,10 @@
 --]]
 
 local json = require 'libs.json'
-local config = require 'src.config'
+local std = require 'rules.std'
 local utils = require 'src.utils'
-local terminal = require 'src.terminal'
 
 local parser = {}
-
---
--- Local
-
----Parse documentation file and create module object
----@param json_path string paths to the json file
----@return module? module Parsed documentation object
-local function parse_path(json_path)
-  local filename = json_path
-
-  filename = filename:sub(#config.doc_folder + 2)
-  filename = filename:sub(1, #filename - (1 + #config.json_extension)) or filename
-
-  if utils.is_blacklisted(config.ignored_docs, filename) then
-    print('[-] The file "' .. json_path .. '" is skipped because it\'s on the ignore list')
-    return nil
-  else
-    local body = utils.read_file(json_path)
-    return json.decode(body)
-  end
-end
 
 --
 -- Public
@@ -46,15 +24,25 @@ function parser.parse_json(json_paths)
   local modules = {}
 
   for _, json_path in ipairs(json_paths) do
-    local module = parse_path(json_path)
+    local body = utils.read_file(json_path)
+    local module = json.decode(body)
+    module._source_path = json_path
 
-    if module and module.info.language == 'Lua' then
-      table.insert(modules, module)
+    if module.info.language:lower() == 'lua' then
+      local elements = {}
+
+      if not std[module.info.namespace] then
+        for _, element in ipairs(module.elements) do
+          element._source_path = json_path
+          table.insert(elements, element)
+        end
+
+        if #elements > 0 or #module.info.namespace > 0 then
+          module.elements = elements
+          table.insert(modules, module)
+        end
+      end
     end
-  end
-
-  if config.clean_traces then
-    terminal.delete_folder(config.doc_folder)
   end
 
   print('-- Modules Parsed Successfully!\n')

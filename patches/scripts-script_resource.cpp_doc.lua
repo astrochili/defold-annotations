@@ -1,0 +1,16 @@
+return {
+  ["elements.resource.create_atlas.parameters.table.types.table"] = "resource.atlas",
+  ["elements.resource.create_buffer.parameters.table.types.table"] = "{ buffer:buffer_data, transfer_ownership?:boolean }",
+  ["elements.resource.create_sound_data.parameters.options.types.table"] = "{ data?:string, filesize?:number, partial?:boolean }",
+  ["elements.resource.create_texture.parameters.table.types.table"] = "{ type:graphics.TEXTURE_TYPE, width:number, height:number, depth:number, format:graphics.TEXTURE_FORMAT, flags?:graphics.TEXTURE_USAGE_FLAG, max_mipmaps?:number, compression_type?:graphics.COMPRESSION_TYPE }",
+  ["elements.resource.create_texture_async.parameters.callback.types.function"] = "fun(self, request_id:number, resource:hash)",
+  ["elements.resource.create_texture_async.parameters.table.types.table"] = "{ type:graphics.TEXTURE_TYPE, width:number, height:number, depth:number, format:graphics.TEXTURE_FORMAT, flags?:graphics.TEXTURE_USAGE_FLAG, max_mipmaps?:number, compression_type?:graphics.COMPRESSION_TYPE }",
+  ["elements.resource.get_atlas.returnvalues.data.types.table"] = "resource.atlas",
+  ["elements.resource.get_render_target_info.returnvalues.table.types.table"] = "{ handle:number, attachments:[{ handle:number, width:number, height:number, depth:number, mipmaps:number, type:graphics.TEXTURE_TYPE, buffer_type:graphics.BUFFER_TYPE, texture:hash }] }",
+  ["elements.resource.get_text_metrics.parameters.options.types.table"] = "{ width?:number, leading?:number, tracking?:number, line_break?:boolean }",
+  ["elements.resource.get_text_metrics.returnvalues.metrics.types.table"] = "{ width:number, height:number, max_ascent:number, max_descent:number }",
+  ["elements.resource.get_texture_info.returnvalues.table.types.table"] = "{ handle:number, width:number, height:number, depth:number, mipmaps:number, flags:number, type:graphics.TEXTURE_TYPE }",
+  ["elements.resource.set_atlas.parameters.table.types.table"] = "resource.atlas",
+  ["elements.resource.set_buffer.parameters.table.types.table"] = "{ transfer_ownership?: boolean }",
+  ["elements.resource.set_texture.parameters.table.types.table"] = "{ type:graphics.TEXTURE_TYPE, width:number, height:number, format:graphics.TEXTURE_FORMAT, x?:number, y?:number, z?:number, mipmap?:number, compression_type?:graphics.COMPRESSION_TYPE}",
+}

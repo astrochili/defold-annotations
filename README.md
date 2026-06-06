@@ -59,7 +59,3 @@ It's also useful to turn the `config.clean_traces` to `true` in [`config.lua`](h
 
 - [json.lua](https://github.com/rxi/json.lua) by rxi
 - [htmlEntities-for-lua](https://github.com/TiagoDanin/htmlEntities-for-lua) by Tiago Danin
-
-## Alternatives
-
-- [defold-lua-annotations](https://github.com/mikatuo/defold-lua-annotations/) (C#) by Dennis Shendrik

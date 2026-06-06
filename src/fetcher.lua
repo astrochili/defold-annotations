@@ -33,29 +33,24 @@ function fetcher.fetch_version()
   assert(version, 'Can\'t find the version info in "' .. config.info_json .. '"')
   print('The latest Defold version is ' .. version)
 
-  if config.clean_traces then
-    terminal.delete_file(config.info_json)
-  end
-
   print('-- Version Fetched Successfully!\n')
   return version
 end
 
 ---Fetch and unzip the Defold documantation files
----@param version string like `1.0.0'
+---@param version_or_path string like `1.0.0' or 'some/docs'
 ---@return string[] json_paths an array of paths to json files
-function fetcher.fetch_docs(version)
+function fetcher.fetch_docs(version_or_path)
   print('-- Documentation Fetching')
 
-  local url = config.doc_url(version)
   local json_list_filename = config.json_list_txt
 
-  terminal.delete_folder(config.doc_folder)
-  terminal.download(url, config.doc_zip)
-  terminal.unzip(config.doc_zip, '.')
-
-  if config.clean_traces then
-    terminal.delete_file(config.doc_zip)
+  if utils.exists(version_or_path) then
+    terminal.copy_folder(version_or_path, config.doc_folder)
+  else
+    local url = config.doc_url(version_or_path)
+    terminal.download(url, config.doc_zip)
+    terminal.unzip(config.doc_zip, config.temp_folder)
   end
 
   terminal.list_all_files(config.doc_folder, config.json_extension, json_list_filename)
@@ -67,10 +62,6 @@ function fetcher.fetch_docs(version)
 
   for index, json_path in ipairs(json_paths) do
     json_paths[index] = config.doc_folder .. config.folder_separator .. json_path
-  end
-
-  if config.clean_traces then
-    terminal.delete_file(json_list_filename)
   end
 
   print('-- Documentation Fetched Successfully!\n')

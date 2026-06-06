@@ -91,12 +91,31 @@ function terminal.create_folder(path)
   print('Creating the folder ' .. quoted(path))
 
   local result = execute(
-    'mkdir ' .. quoted(path),
-    'New-Item -Path ' .. quoted(path) .. ' -ItemType Directory | Out-Null'
+    'mkdir -p ' .. quoted(path),
+    'New-Item -Path ' .. quoted(path) .. ' -ItemType Directory -Force | Out-Null'
   )
 
   assert(result, 'Error during creating a folder "' .. path .. '"')
   print('The folder ' .. quoted(path) .. ' has been successfully created')
+end
+
+---Copy the folder with all the content
+---@param source_path string
+---@param destination_path string
+function terminal.copy_folder(source_path, destination_path)
+  print('Copying the folder ' .. quoted(source_path) .. ' to ' .. quoted(destination_path))
+
+  local result = execute(
+    'cp -R ' .. quoted(source_path) .. ' ' .. quoted(destination_path),
+    'Copy-Item -Path ' ..
+    quoted(source_path) ..
+    ' -Destination ' ..
+    quoted(destination_path) ..
+    ' -Recurse -Force'
+  )
+
+  assert(result, 'Error during copying the folder "' .. source_path .. '" to "' .. destination_path .. '"')
+  print('The folder ' .. quoted(source_path) .. ' has been successfully copied to ' .. quoted(destination_path))
 end
 
 ---Unzip a zip archive
