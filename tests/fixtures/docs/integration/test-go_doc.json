@@ -1,0 +1,28 @@
+{
+  "info": {
+    "namespace": "go",
+    "language": "Lua",
+    "brief": "Go API",
+    "description": "Miniature go fixture"
+  },
+  "elements": [
+    {
+      "type": "CONSTANT",
+      "name": "go.PLAYBACK_ONCE_FORWARD",
+      "brief": "Forward",
+      "description": "Forward playback",
+      "constant_type": "integer",
+      "parameters": [],
+      "returnvalues": []
+    },
+    {
+      "type": "CONSTANT",
+      "name": "go.PLAYBACK_LOOP_FORWARD",
+      "brief": "Loop",
+      "description": "Loop playback",
+      "constant_type": "integer",
+      "parameters": [],
+      "returnvalues": []
+    }
+  ]
+}

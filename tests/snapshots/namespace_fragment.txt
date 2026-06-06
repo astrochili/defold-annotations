@@ -1,0 +1,6 @@
+---@class defold_api.b2d.body
+---Dynamic body
+---@field B2_DYNAMIC_BODY integer
+---Static body
+---@field B2_STATIC_BODY integer
+b2d.body = {}

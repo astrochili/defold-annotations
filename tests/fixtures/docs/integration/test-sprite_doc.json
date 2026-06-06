@@ -1,0 +1,52 @@
+{
+  "info": {
+    "namespace": "sprite",
+    "language": "Lua",
+    "brief": "Sprite API",
+    "description": "Miniature sprite fixture"
+  },
+  "elements": [
+    {
+      "type": "FUNCTION",
+      "name": "sprite.play_flipbook",
+      "brief": "Play flipbook",
+      "description": "Play an animation.",
+      "parameters": [
+        {
+          "name": "url",
+          "doc": "Sprite url",
+          "types": ["string", "hash", "url"],
+          "is_optional": "False"
+        },
+        {
+          "name": "id",
+          "doc": "Animation id",
+          "types": ["string", "hash"],
+          "is_optional": "False"
+        },
+        {
+          "name": "complete_function",
+          "doc": "Completion callback",
+          "types": ["function(self, message_id, message, sender)"],
+          "is_optional": "True"
+        }
+      ],
+      "returnvalues": []
+    },
+    {
+      "type": "MESSAGE",
+      "name": "animation_done",
+      "brief": "Animation done",
+      "description": "Sent when a sprite animation completes.",
+      "parameters": [
+        {
+          "name": "id",
+          "doc": "Animation id",
+          "types": ["hash"],
+          "is_optional": "False"
+        }
+      ],
+      "returnvalues": []
+    }
+  ]
+}

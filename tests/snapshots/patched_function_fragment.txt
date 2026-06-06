@@ -1,0 +1,2 @@
+---@param complete_function? fun(self, message_id:hash, message:message.model.model_animation_done, sender:url) Completion callback
+function model.play_anim(url, anim_id, playback, play_properties, complete_function) end

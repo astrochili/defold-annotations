@@ -1,0 +1,95 @@
+{
+  "info": {
+    "namespace": "sound",
+    "language": "Lua",
+    "brief": "Sound API",
+    "description": "Miniature sound fixture"
+  },
+  "elements": [
+    {
+      "type": "FUNCTION",
+      "name": "sound.play",
+      "brief": "Play sound",
+      "description": "Play a sound.",
+      "parameters": [
+        {
+          "name": "url",
+          "doc": "Sound url",
+          "types": ["string", "hash", "url"],
+          "is_optional": "False"
+        },
+        {
+          "name": "play_properties",
+          "doc": "Playback settings",
+          "types": ["table"],
+          "is_optional": "True"
+        },
+        {
+          "name": "complete_function",
+          "doc": "Completion callback",
+          "types": ["function(self, message_id, message, sender)"],
+          "is_optional": "True"
+        }
+      ],
+      "returnvalues": []
+    },
+    {
+      "type": "FUNCTION",
+      "name": "sound.stop",
+      "brief": "Stop sound",
+      "description": "Stop a sound.",
+      "parameters": [
+        {
+          "name": "url",
+          "doc": "Sound url",
+          "types": ["string", "hash", "url"],
+          "is_optional": "False"
+        },
+        {
+          "name": "stop_properties",
+          "doc": "Stop settings",
+          "types": ["table"],
+          "is_optional": "True"
+        }
+      ],
+      "returnvalues": []
+    },
+    {
+      "type": "FUNCTION",
+      "name": "sound.get_groups",
+      "brief": "Get groups",
+      "description": "Return group ids.",
+      "parameters": [],
+      "returnvalues": [
+        {
+          "name": "groups",
+          "doc": "Group ids",
+          "types": ["table"]
+        }
+      ]
+    },
+    {
+      "type": "MESSAGE",
+      "name": "sound_done",
+      "brief": "Sound finished",
+      "description": "Sent when playback is done.",
+      "parameters": [
+        {
+          "name": "play_id",
+          "doc": "Playback id",
+          "types": ["number"],
+          "is_optional": "False"
+        }
+      ],
+      "returnvalues": []
+    },
+    {
+      "type": "MESSAGE",
+      "name": "sound_stopped",
+      "brief": "Sound stopped",
+      "description": "Sent when playback stops.",
+      "parameters": [],
+      "returnvalues": []
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "info": {
+    "namespace": "physics",
+    "language": "Lua",
+    "brief": "Physics API",
+    "description": "Miniature physics fixture"
+  },
+  "elements": [
+    {
+      "type": "CONSTANT",
+      "name": "physics.JOINT_TYPE_FIXED",
+      "brief": "Fixed",
+      "description": "Fixed joint",
+      "constant_type": "integer",
+      "parameters": [],
+      "returnvalues": []
+    },
+    {
+      "type": "CONSTANT",
+      "name": "physics.JOINT_TYPE_SPRING",
+      "brief": "Spring",
+      "description": "Spring joint",
+      "constant_type": "integer",
+      "parameters": [],
+      "returnvalues": []
+    },
+    {
+      "type": "CONSTANT",
+      "name": "physics.SHAPE_TYPE_BOX",
+      "brief": "Box",
+      "description": "Box shape",
+      "constant_type": "integer",
+      "parameters": [],
+      "returnvalues": []
+    },
+    {
+      "type": "CONSTANT",
+      "name": "physics.SHAPE_TYPE_SPHERE",
+      "brief": "Sphere",
+      "description": "Sphere shape",
+      "constant_type": "integer",
+      "parameters": [],
+      "returnvalues": []
+    },
+    {
+      "type": "FUNCTION",
+      "name": "physics.raycast",
+      "brief": "Raycast",
+      "description": "Cast a ray.",
+      "parameters": [
+        {
+          "name": "from",
+          "doc": "Start point",
+          "types": ["vector3"],
+          "is_optional": "False"
+        },
+        {
+          "name": "to",
+          "doc": "End point",
+          "types": ["vector3"],
+          "is_optional": "False"
+        },
+        {
+          "name": "groups",
+          "doc": "Collision groups",
+          "types": ["table"],
+          "is_optional": "False"
+        },
+        {
+          "name": "options",
+          "doc": "Options",
+          "types": ["table"],
+          "is_optional": "True"
+        }
+      ],
+      "returnvalues": [
+        {
+          "name": "result",
+          "doc": "Raycast result",
+          "types": ["table"]
+        }
+      ]
+    },
+    {
+      "type": "FUNCTION",
+      "name": "physics.set_event_listener",
+      "brief": "Listen for physics events",
+      "description": "Register callback.",
+      "parameters": [
+        {
+          "name": "callback",
+          "doc": "Event callback",
+          "types": ["function(self, events)"],
+          "is_optional": "False"
+        }
+      ],
+      "returnvalues": []
+    },
+    {
+      "type": "MESSAGE",
+      "name": "contact_point_event",
+      "brief": "Contact point",
+      "description": "Contact event.",
+      "parameters": [
+        {
+          "name": "position",
+          "doc": "Hit position",
+          "types": ["vector3"],
+          "is_optional": "False"
+        }
+      ],
+      "returnvalues": []
+    },
+    {
+      "type": "MESSAGE",
+      "name": "collision_event",
+      "brief": "Collision",
+      "description": "Collision event.",
+      "parameters": [],
+      "returnvalues": []
+    },
+    {
+      "type": "MESSAGE",
+      "name": "trigger_event",
+      "brief": "Trigger",
+      "description": "Trigger event.",
+      "parameters": [],
+      "returnvalues": []
+    },
+    {
+      "type": "MESSAGE",
+      "name": "ray_cast_missed",
+      "brief": "Missed",
+      "description": "Raycast missed.",
+      "parameters": [],
+      "returnvalues": []
+    },
+    {
+      "type": "MESSAGE",
+      "name": "ray_cast_response",
+      "brief": "Raycast response",
+      "description": "Raycast hit.",
+      "parameters": [
+        {
+          "name": "fraction",
+          "doc": "Hit fraction",
+          "types": ["number"],
+          "is_optional": "False"
+        },
+        {
+          "name": "shape",
+          "doc": "Shape info<dl><dt><code>type</code></dt><dd><span class=\"type\">physics.SHAPE_TYPE</span> Shape type.</dd><dt><code>diameter</code></dt><dd><span class=\"type\">number</span> Diameter.</dd></dl>",
+          "types": ["table"],
+          "is_optional": "True"
+        }
+      ],
+      "returnvalues": []
+    }
+  ]
+}

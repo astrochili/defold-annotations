@@ -1,0 +1,70 @@
+{
+  "info": {
+    "namespace": "model",
+    "language": "Lua",
+    "brief": "Model API",
+    "description": "Miniature model fixture"
+  },
+  "elements": [
+    {
+      "type": "FUNCTION",
+      "name": "model.play_anim",
+      "brief": "Play animation",
+      "description": "Play a model animation.",
+      "parameters": [
+        {
+          "name": "url",
+          "doc": "Model url",
+          "types": ["string", "hash", "url"],
+          "is_optional": "False"
+        },
+        {
+          "name": "anim_id",
+          "doc": "Animation id",
+          "types": ["string", "hash"],
+          "is_optional": "False"
+        },
+        {
+          "name": "playback",
+          "doc": "Playback mode",
+          "types": ["constant"],
+          "is_optional": "False"
+        },
+        {
+          "name": "play_properties",
+          "doc": "Playback settings",
+          "types": ["table"],
+          "is_optional": "True"
+        },
+        {
+          "name": "complete_function",
+          "doc": "Completion callback",
+          "types": ["function(self, message_id, message, sender)"],
+          "is_optional": "True"
+        }
+      ],
+      "returnvalues": []
+    },
+    {
+      "type": "MESSAGE",
+      "name": "model_animation_done",
+      "brief": "Animation finished",
+      "description": "Sent when model animation finishes.",
+      "parameters": [
+        {
+          "name": "animation_id",
+          "doc": "Animation id",
+          "types": ["hash"],
+          "is_optional": "False"
+        },
+        {
+          "name": "playback",
+          "doc": "Playback mode",
+          "types": ["go.PLAYBACK"],
+          "is_optional": "False"
+        }
+      ],
+      "returnvalues": []
+    }
+  ]
+}

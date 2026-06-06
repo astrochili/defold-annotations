@@ -1,0 +1,39 @@
+{
+  "info": {
+    "namespace": "sprite",
+    "language": "Lua",
+    "brief": "Sprite API",
+    "description": "Sprite message fixture"
+  },
+  "elements": [
+    {
+      "type": "MESSAGE",
+      "name": "animation_done",
+      "brief": "Animation finished",
+      "description": "Sent when the animation finishes.",
+      "parameters": [
+        {
+          "name": "animation_id",
+          "doc": "Completed animation id",
+          "types": ["hash"],
+          "is_optional": "False"
+        },
+        {
+          "name": "payload",
+          "doc": "Optional payload<dl><dt><code>score</code></dt><dd><span class=\"type\">number</span> Final score.</dd><dt><code>label</code></dt><dd><span class=\"type\">string</span> Debug label.</dd></dl>",
+          "types": ["table"],
+          "is_optional": "True"
+        }
+      ],
+      "returnvalues": []
+    },
+    {
+      "type": "MESSAGE",
+      "name": "cancelled",
+      "brief": "Animation cancelled",
+      "description": "Sent when the animation is cancelled.",
+      "parameters": [],
+      "returnvalues": []
+    }
+  ]
+}

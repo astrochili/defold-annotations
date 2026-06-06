@@ -1,0 +1,3 @@
+---@class message.physics.ray_cast_response.shape
+---@field diameter number Diameter.
+---@field type physics.SHAPE_TYPE Shape type.

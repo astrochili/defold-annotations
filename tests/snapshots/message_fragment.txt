@@ -1,0 +1,3 @@
+---@class message.physics.ray_cast_response
+---@field fraction number Hit fraction
+---@field shape? message.physics.ray_cast_response.shape Shape info

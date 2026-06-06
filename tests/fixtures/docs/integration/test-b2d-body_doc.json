@@ -1,0 +1,43 @@
+{
+  "info": {
+    "namespace": "b2d.body",
+    "language": "Lua",
+    "brief": "Body API",
+    "description": "Miniature b2d.body fixture"
+  },
+  "elements": [
+    {
+      "type": "CONSTANT",
+      "name": "b2d.body.B2_STATIC_BODY",
+      "brief": "Static",
+      "description": "Static body",
+      "constant_type": "integer",
+      "parameters": [],
+      "returnvalues": []
+    },
+    {
+      "type": "CONSTANT",
+      "name": "b2d.body.B2_DYNAMIC_BODY",
+      "brief": "Dynamic",
+      "description": "Dynamic body",
+      "constant_type": "integer",
+      "parameters": [],
+      "returnvalues": []
+    },
+    {
+      "type": "FUNCTION",
+      "name": "b2d.body.apply_force",
+      "brief": "Apply force",
+      "description": "Apply force to a body.",
+      "parameters": [
+        {
+          "name": "body",
+          "doc": "Body handle",
+          "types": ["b2d.body"],
+          "is_optional": "False"
+        }
+      ],
+      "returnvalues": []
+    }
+  ]
+}

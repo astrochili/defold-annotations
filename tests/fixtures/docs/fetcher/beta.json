@@ -1,0 +1,9 @@
+{
+  "info": {
+    "namespace": "fetcher",
+    "language": "Lua",
+    "brief": "Fetcher beta",
+    "description": "Fetcher beta fixture"
+  },
+  "elements": []
+}

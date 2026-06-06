@@ -41,6 +41,23 @@ $ lua main.lua '1.5.0'
 
 As a result, you will see the `api` folder with `.lua` files. These are the annotations.
 
+## Tests
+
+The repository includes a self-contained test harness with no runtime dependency on local `doc/` or generated `defold_api/` folders.
+
+Run all tests with:
+
+```sh
+$ lua tests/run.lua
+```
+
+The test system uses:
+
+- `tests/fixtures/docs/` for miniature synthetic Defold docs
+- `tests/fixtures/modules/` for direct module fixtures
+- `tests/fixtures/patches/` for patch-specific test data
+- `tests/snapshots/` for small curated output fragments
+
 ## Contribution
 
 ### Issues

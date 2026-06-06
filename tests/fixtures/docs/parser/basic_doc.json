@@ -1,0 +1,80 @@
+{
+  "info": {
+    "namespace": "sample",
+    "language": "Lua",
+    "brief": "Sample API",
+    "description": "Sample parser fixture"
+  },
+  "elements": [
+    {
+      "type": "FUNCTION",
+      "name": "sample.run",
+      "brief": "Run sample",
+      "description": "Runs the sample pipeline.",
+      "parameters": [
+        {
+          "name": "url",
+          "doc": "Target url",
+          "types": ["string", "hash", "url"],
+          "is_optional": "False"
+        },
+        {
+          "name": "options",
+          "doc": "Optional settings",
+          "types": ["table"],
+          "is_optional": "True"
+        }
+      ],
+      "returnvalues": [
+        {
+          "name": "ok",
+          "doc": "True on success",
+          "types": ["boolean"]
+        },
+        {
+          "name": "payload",
+          "doc": "Returned payload",
+          "types": ["string", "number"]
+        }
+      ]
+    },
+    {
+      "type": "VARIABLE",
+      "name": "sample.state",
+      "brief": "State",
+      "description": "Current state",
+      "parameters": [],
+      "returnvalues": []
+    },
+    {
+      "type": "CONSTANT",
+      "name": "sample.MODE_ALPHA",
+      "brief": "Alpha mode",
+      "description": "Primary mode",
+      "constant_type": "integer",
+      "parameters": [],
+      "returnvalues": []
+    },
+    {
+      "type": "MESSAGE",
+      "name": "finished",
+      "brief": "Finished",
+      "description": "Sent when work is finished.",
+      "parameters": [
+        {
+          "name": "id",
+          "doc": "Message id",
+          "types": ["hash"],
+          "is_optional": "False"
+        },
+        {
+          "name": "payload",
+          "doc": "Payload values<dl><dt><code>score</code></dt><dd><span class=\"type\">number</span> Final score.</dd><dt><code>tag</code></dt><dd><span class=\"type\">string</span> Payload tag.</dd></dl>",
+          "types": ["table"],
+          "is_optional": "True"
+        }
+      ],
+      "returnvalues": []
+    }
+  ]
+}
