@@ -1,6 +1,8 @@
 # Defold Annotations
 
-[![Workflow](https://img.shields.io/github/actions/workflow/status/astrochili/defold-annotations/release.yml)](https://github.com/astrochili/defold-annotations/actions/workflows/release.yml)
+> [!WARNING]
+> **Supported through Defold 1.13.1.** Starting with [Defold 1.13.2](https://defold.com/2026/09/29/Defold-1-13-2/), use the official Lua annotations included in the editor and in the `ref-doc.zip` asset on the [Defold Releases](https://github.com/defold/defold/releases) page. Automatic generation and releases from this repository have been discontinued. Existing releases and this generator remain available for older Defold versions.
+
 [![Release](https://img.shields.io/github/v/release/astrochili/defold-annotations.svg?include_prereleases=&sort=semver&color=blue)](https://github.com/astrochili/defold-annotations/releases)
 [![License](https://img.shields.io/badge/License-MIT-blue)](https://github.com/astrochili/defold-annotations/blob/master/LICENSE)
 [![Website](https://img.shields.io/badge/website-gray.svg?&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxNiIgZmlsbD0ibm9uZSIgdmlld0JveD0iMCAwIDE4IDE2Ij48Y2lyY2xlIGN4PSIzLjY2IiBjeT0iMTQuNzUiIHI9IjEuMjUiIGZpbGw9InVybCgjYSkiLz48Y2lyY2xlIGN4PSI4LjY2IiBjeT0iMTQuNzUiIHI9IjEuMjUiIGZpbGw9InVybCgjYikiLz48Y2lyY2xlIGN4PSIxMy42NSIgY3k9IjE0Ljc1IiByPSIxLjI1IiBmaWxsPSJ1cmwoI2MpIi8+PHBhdGggZmlsbD0idXJsKCNkKSIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNNy42MyAxLjQ4Yy41LS43IDEuNTUtLjcgMi4wNSAwbDYuMjIgOC44MWMuNTguODMtLjAxIDEuOTctMS4wMyAxLjk3SDIuNDRhMS4yNSAxLjI1IDAgMCAxLTEuMDItMS45N2w2LjIxLTguODFaIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiLz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImEiIHgxPSIyLjQxIiB4Mj0iMi40MSIgeTE9IjEzLjUiIHkyPSIxNiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiNGRDhENDIiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGOTU0MUYiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBpZD0iYiIgeDE9IjcuNDEiIHgyPSI3LjQxIiB5MT0iMTMuNSIgeTI9IjE2IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iI0ZEOEQ0MiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0Y5NTQxRiIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJjIiB4MT0iMTIuNCIgeDI9IjEyLjQiIHkxPSIxMy41IiB5Mj0iMTYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjRkQ4RDQyIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRjk1NDFGIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImQiIHgxPSIuMDMiIHgyPSIuMDMiIHkxPSIuMDMiIHkyPSIxMi4yNiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiNGRkU2NUUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkM4MzAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48L3N2Zz4=)](https://astronachos.com/)
@@ -19,27 +21,21 @@ Generated annotations are available on the [Releases](https://github.com/astroch
 
 These annotations are used by [Defold Kit](https://github.com/astrochili/vscode-defold), a Visual Studio Code extension for developing games with Defold.
 
-## Automatic Releases
-
-This repository has an [action workflow](https://github.com/astrochili/defold-annotations/actions/workflows/release.yml) that checks the latest version of Defold daily and automatically generates and releases the new version of annotations if required.
-
-But if something goes wrong and edits are needed, there will be an additional manual update in the release.
-
 ## Manual Generation
 
-Install [Lua](https://www.lua.org/) and run the `main.lua` script.
+Install [Lua](https://www.lua.org/) and run the `main.lua` script with an explicit supported Defold version (up to 1.13.1).
 
 ```sh
-$ lua main.lua
+$ lua main.lua '1.13.1'
 ```
 
-By default it generates the annotations for the latest version of Defold. But you can also specify the Defold version as an argument.
+Do not omit the version argument: the default fetches the latest Defold release, which this generator no longer supports. You can also generate annotations for earlier versions.
 
 ```sh
 $ lua main.lua '1.5.0'
 ```
 
-As a result, you will see the `api` folder with `.lua` files. These are the annotations.
+As a result, you will see the `tmp/defold_api` folder with `.lua` files. These are the annotations.
 
 ## Tests
 
